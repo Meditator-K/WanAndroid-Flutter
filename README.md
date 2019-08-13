@@ -2,15 +2,17 @@
 
 A new Flutter application.
 
-## Getting Started
+# 简介
 
-This project is a starting point for a Flutter application.
+根据鸿洋大神的WanAndroid开放api开发的一个简单的flutter版本的WanAndroid客户端
 
-A few resources to get you started if this is your first Flutter project:
+# 涉及技术点
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+、、、  
+  dio: 2.1.7  //网络请求库
+  toast: ^0.1.5  //Toast
+  flutter_swiper : ^1.1.6  //滚动页面，类似ViewPager
+  shared_preferences: ^0.5.3+4  //sp存储
+  flutter_webview_plugin: ^0.3.5  //webview
+  date_format: ^1.0.6  //日期格式化
+、、、
