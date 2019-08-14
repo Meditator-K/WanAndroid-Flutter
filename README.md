@@ -3,6 +3,16 @@
 
 根据鸿洋大神的WanAndroid开放api开发的一个简单的flutter版本的WanAndroid客户端
 
+## 功能
+
+* 首页banner和文章列表
+* 体系
+* 导航
+* 项目
+* 收藏
+* TODO（便签）
+* 搜索
+
 ## 涉及技术点
 
 ``` 
