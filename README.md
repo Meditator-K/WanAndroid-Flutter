@@ -188,7 +188,7 @@ showDatePicker(
   ...);
 ```
 
-* 9.Webview可以说使用webview_flutter或flutter_webview_plugin，但是使用过程发现用webview_flutter时，
+* 9.Webview可以使用webview_flutter或flutter_webview_plugin，但是使用过程发现用webview_flutter时，
 在页面再点击其他链接时，点返回键就直接退出Webview界面而不是返回上一级，所以最后用了flutter_webview_plugin；
 
 * 10.Json转换工具使用FlutterJsonBeanFactory插件；
