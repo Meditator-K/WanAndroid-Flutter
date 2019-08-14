@@ -39,5 +39,7 @@ class User {
   void clearUserInfo() {
     SpUtil.putStr(DataKeys.USERNAME, null);
     SpUtil.putStrList(DataKeys.COOKIE, null);
+    this.cookies = null;
+    this.username = null;
   }
 }
