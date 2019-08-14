@@ -192,3 +192,5 @@ showDatePicker(
 在页面再点击其他链接时，点返回键就直接退出Webview界面而不是返回上一级，所以最后用了flutter_webview_plugin；
 
 * 10.Json转换工具使用FlutterJsonBeanFactory插件；
+
+* 11.打包apk命令：flutter build apk，打包后的apk在build/app/outputs/apk/release/app-release.apk目录；
