@@ -135,35 +135,6 @@ class _NaviWidgetState extends State<NaviWidget>
       _contentScrollController.animateTo(offset,
           duration: Duration(seconds: 1), curve: Curves.fastOutSlowIn);
     }
-//    setState(() {
-//      _currentIndex = index;
-//    });
-//    _contentScrollController.animateTo(offset,
-//        duration: Duration(seconds: 1), curve: Curves.fastOutSlowIn);
-  }
-
-  Widget _itemBuilder(BuildContext context, int index) {
-    return Column(
-      children: <Widget>[
-        Padding(
-          padding: EdgeInsets.all(10),
-          child: Text(
-            _naviEntities[index].name,
-            style: WidgetStyle.TREE_TITLE_TEXT_STYLE2,
-          ),
-        ),
-        Padding(
-          padding: EdgeInsets.all(10),
-          child: Container(
-            child: Wrap(
-                direction: Axis.horizontal,
-                spacing: 5.0,
-                runSpacing: 8.0,
-                children: getWrapWidget(context, index)),
-          ),
-        )
-      ],
-    );
   }
 
   List<Widget> getWrapWidget(BuildContext context, int index) {

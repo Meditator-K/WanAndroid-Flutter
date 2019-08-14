@@ -12,7 +12,6 @@ import 'constant/data_keys.dart';
 import 'global/user.dart';
 
 void main() {
-//  User().loadUserInfo();
   SpUtil.getStrList(DataKeys.COOKIE).then((cookie) {
     if (cookie != null) {
       User().cookies = cookie;
@@ -29,7 +28,6 @@ void main() {
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-//    User().loadUserInfo();
     return MaterialApp(
       localizationsDelegates: [
         //日历控件设置中文需要
