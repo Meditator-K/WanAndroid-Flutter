@@ -194,3 +194,11 @@ showDatePicker(
 * 10.Json转换工具使用FlutterJsonBeanFactory插件；
 
 * 11.打包apk命令：flutter build apk，打包后的apk在build/app/outputs/apk/release/app-release.apk目录；
+
+* 12.ListView条目没有占满屏幕时，RefreshIndicator的下拉刷新无法触发，可以给ListView添加physics: AlwaysScrollableScrollPhysics()来解决；
+
+```
+ListView.separated(
+      physics: AlwaysScrollableScrollPhysics(),
+      ...)
+```

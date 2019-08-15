@@ -101,6 +101,7 @@ class _ProjectWidgetState extends State<ProjectWidget>
       widgets.add(RefreshIndicator(
           child: _projectList[i].length > 0
               ? ListView.separated(
+                  physics: AlwaysScrollableScrollPhysics(),//始终能滚动，否则条目不占满屏幕时无法触发下拉刷新
                   itemBuilder: (context, index) =>
                       _itemBuilder(context, index, i),
                   separatorBuilder: (context, index) {

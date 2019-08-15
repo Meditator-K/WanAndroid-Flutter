@@ -74,11 +74,13 @@ class ToDoPageState extends State<ToDoPage> with TickerProviderStateMixin {
                           controller: _tabController,
                           children: <Widget>[
                         ListView.separated(
+                            physics: AlwaysScrollableScrollPhysics(),
                             itemBuilder: (context, index) =>
                                 _itemBuilder(context, index, _toDoPending),
                             separatorBuilder: _separatedBuilder,
                             itemCount: _toDoPending.length),
                         ListView.separated(
+                            physics: AlwaysScrollableScrollPhysics(),
                             itemBuilder: (context, index) =>
                                 _itemBuilder(context, index, _toDoSolved),
                             separatorBuilder: _separatedBuilder,

@@ -113,6 +113,7 @@ class TreeDetailPageState extends State<TreeDetailPage>
       widgets.add(RefreshIndicator(
           child: _articleList[i].length > 0
               ? ListView.separated(
+                  physics: AlwaysScrollableScrollPhysics(),
                   itemBuilder: (context, index) =>
                       _itemBuilder(context, index, i),
                   separatorBuilder: (context, index) {

@@ -46,6 +46,7 @@ class _CollectListPageState extends State<CollectListPage> {
       body: RefreshIndicator(
           child: _collectList.length > 0
               ? ListView.separated(
+                  physics: AlwaysScrollableScrollPhysics(),
                   separatorBuilder: (context, index) {
                     return Container(
                       constraints: BoxConstraints.tightFor(height: 1),
