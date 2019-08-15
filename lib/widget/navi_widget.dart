@@ -6,6 +6,7 @@ import 'package:wan_android/http/api.dart';
 import 'package:wan_android/http/http_manager.dart';
 import 'package:wan_android/page/web_page.dart';
 
+///页面只是listview，比较简单
 class NaviWidget extends StatefulWidget {
   @override
   _NaviWidgetState createState() => _NaviWidgetState();

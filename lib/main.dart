@@ -3,7 +3,7 @@ import 'package:wan_android/page/collect_list_page.dart';
 import 'package:wan_android/page/home_page.dart';
 import 'package:wan_android/page/login_page.dart';
 import 'package:wan_android/page/register_page.dart';
-import 'package:wan_android/page/search_page.dart';
+import 'package:wan_android/page/search_page2.dart';
 import 'package:wan_android/page/todo_page.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:wan_android/util/sp_util.dart';
