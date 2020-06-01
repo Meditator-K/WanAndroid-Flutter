@@ -35,7 +35,7 @@ class SearchPageState extends State<SearchPage> {
                               color: Colors.white,
                               size: 20,
                             ),
-                            onPressed: _clearText,
+                            onPressed: () => _searchTextController.clear(),
                           ),
                           hintText: '请输入搜索内容',
                           hintStyle: WidgetStyle.BTN_STYLE),
@@ -86,9 +86,5 @@ class SearchPageState extends State<SearchPage> {
                           strokeWidth: 4,
                         )),
                 )));
-  }
-
-  void _clearText() {
-    _searchTextController.clear();
   }
 }
