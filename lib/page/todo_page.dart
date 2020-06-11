@@ -1,4 +1,4 @@
-import 'package:date_format/date_format.dart';
+import 'package:date_format/date_format.dart' as DataFormat;
 import 'package:flutter/material.dart';
 import 'package:wan_android/constant/http_code.dart';
 import 'package:wan_android/constant/widget_style.dart';
@@ -20,7 +20,7 @@ class ToDoPageState extends State<ToDoPage> with TickerProviderStateMixin {
   TabController _tabController;
   var _titleController = TextEditingController();
   var _contentController = TextEditingController();
-  String _completeTime = formatDate(DateTime.now(), [yyyy, '-', mm, '-', dd]);
+  String _completeTime = DataFormat.formatDate(DateTime.now(), [DataFormat.yyyy, '-', DataFormat.mm, '-', DataFormat.dd]);
   bool _isAdd = true; //添加还是更新
 
   @override
@@ -183,7 +183,7 @@ class ToDoPageState extends State<ToDoPage> with TickerProviderStateMixin {
     _isAdd = true;
     _titleController.text = '';
     _contentController.text = '';
-    _completeTime = formatDate(DateTime.now(), [yyyy, '-', mm, '-', dd]);
+    _completeTime = DataFormat.formatDate(DateTime.now(), [DataFormat.yyyy, '-', DataFormat.mm, '-', DataFormat.dd]);
     _showToDoDialog(context, 0, null);
   }
 
@@ -234,8 +234,8 @@ class ToDoPageState extends State<ToDoPage> with TickerProviderStateMixin {
                                       DateTime.now().add(Duration(days: 30)))
                               .then((dateTime) {
                             state(() {
-                              _completeTime = formatDate(
-                                  dateTime, [yyyy, '-', mm, '-', dd]);
+                              _completeTime = DataFormat.formatDate(
+                                  dateTime, [DataFormat.yyyy, '-', DataFormat.mm, '-', DataFormat.dd]);
                             });
                           });
                         },

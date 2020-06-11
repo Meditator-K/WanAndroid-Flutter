@@ -12,6 +12,7 @@ import 'constant/data_keys.dart';
 import 'global/user.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   SpUtil.getStrList(DataKeys.COOKIE).then((cookie) {
     if (cookie != null) {
       User().cookies = cookie;

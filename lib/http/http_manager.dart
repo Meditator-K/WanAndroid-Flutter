@@ -80,7 +80,7 @@ class HttpManager {
     try {
       response = await _dio.post(
         url,
-        data: FormData.from(params),
+        data: FormData.fromMap(params),
       );
       if (response.statusCode == HttpStatus.ok) {
         print('post请求成功-->response data：${response.data}');
@@ -104,7 +104,7 @@ class HttpManager {
     Response response;
     try {
       response =
-          await _dio.post(url, data: FormData.from(params), options: options);
+          await _dio.post(url, data: FormData.fromMap(params), options: options);
       if (response.statusCode == HttpStatus.ok) {
         print('post请求成功-->response data：${response.data}');
         return BaseEntity(
@@ -126,7 +126,7 @@ class HttpManager {
     try {
       response = await _dio.post(
         url,
-        data: FormData.from(params),
+        data: FormData.fromMap(params),
       );
       if (response.statusCode == HttpStatus.ok) {
         print('post请求成功-->response data：${response.data}');
