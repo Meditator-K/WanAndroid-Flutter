@@ -30,4 +30,14 @@ class SpUtil {
     SharedPreferences sp = await SharedPreferences.getInstance();
     return sp.getStringList(key);
   }
+
+  static putBool(String key, bool value) async {
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    sp.setBool(key, value);
+  }
+
+  static Future<bool> getBool(String key) async {
+    SharedPreferences sp = await SharedPreferences.getInstance();
+    return sp.getBool(key);
+  }
 }

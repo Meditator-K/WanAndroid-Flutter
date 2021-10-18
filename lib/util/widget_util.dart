@@ -72,3 +72,28 @@ Widget cardWidget(BuildContext context, int index, List<ArticleData> articles,
             )),
       ));
 }
+
+void onShowDialog(context, text, onCancel, onConfirm) {
+  showDialog(
+      context: context,
+      builder: (_) => AlertDialog(
+            title: Text('提示！'),
+            content: Text(text),
+            actions: <Widget>[
+              ElevatedButton(
+                child: Text('取消'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  onCancel();
+                },
+              ),
+              ElevatedButton(
+                child: Text('确定'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  onConfirm();
+                },
+              )
+            ],
+          ));
+}

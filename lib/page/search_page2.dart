@@ -15,7 +15,8 @@ class SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-        builder: (context) => HotKeyModel()..getHotKey(),
+      create: (context) => HotKeyModel()..getHotKey(),
+        // builder: (context) => HotKeyModel()..getHotKey(),
         child: Consumer<HotKeyModel>(
             builder: (context, hotKeyModel, _) => Scaffold(
                   appBar: AppBar(

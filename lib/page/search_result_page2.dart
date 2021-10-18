@@ -30,7 +30,7 @@ class _ResultPageState extends State<SearchResultPage> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return ChangeNotifierProvider(
-        builder: (context) => SearchResultModel()..doSearch(keywords),
+        create: (context) => SearchResultModel()..doSearch(keywords),
         child: Scaffold(
             appBar: AppBar(
               title: Text(keywords),

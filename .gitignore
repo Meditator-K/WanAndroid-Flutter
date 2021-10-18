@@ -33,11 +33,8 @@
 **/android/**/gradle-wrapper.jar
 **/android/.gradle
 **/android/captures/
-**/android/gradlew
-**/android/gradlew.bat
 **/android/local.properties
 **/android/**/GeneratedPluginRegistrant.java
-/android/app/build.gradle
 
 # iOS/XCode related
 **/ios/**/*.mode1v3
