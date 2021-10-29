@@ -133,6 +133,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "0.4.0"
+  gesture_password_widget:
+    dependency: "direct main"
+    description:
+      name: gesture_password_widget
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "2.0.0"
   http_parser:
     dependency: transitive
     description:

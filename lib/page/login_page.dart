@@ -101,6 +101,19 @@ class _LoginPageState extends State<LoginPage> {
                     )
                   ],
                 ),
+                Flex(
+                  direction: Axis.horizontal,
+                  children: <Widget>[
+                    Expanded(
+                      flex: 1,
+                      child: RaisedButton(
+                        child: Text('手势登录', style: WidgetStyle.BTN_STYLE),
+                        onPressed: _toGestureLogin,
+                        color: Colors.lightBlue,
+                      ),
+                    )
+                  ],
+                ),
               ],
             ))));
   }
@@ -177,6 +190,10 @@ class _LoginPageState extends State<LoginPage> {
 
   void _toFingerprintLogin() {
     Navigator.pushNamed(context, '/FingerprintLoginPage');
+  }
+
+  void _toGestureLogin() {
+    Navigator.pushNamed(context, '/GestureUnlockPage');
   }
 
   void _setFingerprint(context) async{

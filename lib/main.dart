@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:wan_android/page/collect_list_page.dart';
 import 'package:wan_android/page/fingerprint_login_page.dart';
+import 'package:wan_android/page/gesture_unlock_page.dart';
 import 'package:wan_android/page/home_page.dart';
 import 'package:wan_android/page/login_page.dart';
 import 'package:wan_android/page/register_page.dart';
@@ -54,6 +55,7 @@ class MyApp extends StatelessWidget {
         '/CollectListPage': (context) => CollectListPage(),
         '/ToDoPage': (context) => ToDoPage(),
         '/FingerprintLoginPage': (context) => FingerprintLoginPage(),
+        '/GestureUnlockPage': (context) => GestureUnlockPage(),
       },
     );
   }
