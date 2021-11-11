@@ -188,14 +188,11 @@ showDatePicker(
   ...);
 ```
 
-* 9.Webview可以使用webview_flutter或flutter_webview_plugin，但是使用过程发现用webview_flutter时，
-在页面再点击其他链接时，点返回键就直接退出Webview界面而不是返回上一级，所以最后用了flutter_webview_plugin；
+* 9.Json转换工具使用FlutterJsonBeanFactory插件；
 
-* 10.Json转换工具使用FlutterJsonBeanFactory插件；
+* 10.打包apk命令：flutter build apk，打包后的apk在build/app/outputs/apk/release/app-release.apk目录；
 
-* 11.打包apk命令：flutter build apk，打包后的apk在build/app/outputs/apk/release/app-release.apk目录；
-
-* 12.ListView条目没有占满屏幕时，RefreshIndicator的下拉刷新无法触发，可以给ListView添加physics: AlwaysScrollableScrollPhysics()来解决；
+* 11.ListView条目没有占满屏幕时，RefreshIndicator的下拉刷新无法触发，可以给ListView添加physics: AlwaysScrollableScrollPhysics()来解决；
 
 ```
 ListView.separated(
