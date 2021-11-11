@@ -13,7 +13,7 @@ class User {
   List<String> cookies;
   String username;
   bool fingerprintUnlock; //是否设置指纹识别
-  bool gestureUnlock; //是否设置手势识别
+  String gestureUnlock; //是否设置手势识别
 
   void saveCookies(List<String> cookies) {
     this.cookies = cookies;
@@ -30,9 +30,9 @@ class User {
     SpUtil.putBool(DataKeys.FINGERPRINT_UNLOCK, fingerprint);
   }
 
-  void saveGesture(bool gesture){
+  void saveGesture(String gesture){
     this.gestureUnlock = gesture;
-    SpUtil.putBool(DataKeys.GESTURE_UNLOCK, gesture);
+    SpUtil.putStr(DataKeys.GESTURE_UNLOCK, gesture);
   }
 
   void loadUserInfo() {
@@ -51,7 +51,7 @@ class User {
         this.fingerprintUnlock = value;
       }
     });
-    SpUtil.getBool(DataKeys.GESTURE_UNLOCK).then((value) {
+    SpUtil.getStr(DataKeys.GESTURE_UNLOCK).then((value) {
       if (value != null) {
         this.gestureUnlock = value;
       }

@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:gesture_password_widget/widget/gesture_password_widget.dart';
+import 'package:wan_android/global/user.dart';
 
 class GestureUnlockPage extends StatefulWidget {
   @override
@@ -9,6 +10,20 @@ class GestureUnlockPage extends StatefulWidget {
 
 class _GestureUnlockState extends State<GestureUnlockPage> {
   String _result = "";
+  String _gesture = "";
+  String _notice = "";
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _gesture = User().gestureUnlock ?? '';
+    if (_gesture == '') {
+      _notice = '请设置手势';
+    } else {
+      _notice = '请绘制手势';
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,8 +31,17 @@ class _GestureUnlockState extends State<GestureUnlockPage> {
       appBar: AppBar(
         title: Text('图案识别'),
       ),
-      body: Column(
+      body: Center(
+          child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
+          SizedBox(
+            height: 20,
+          ),
+          Text(
+            _notice,
+            style: TextStyle(fontSize: 16, color: Colors.black),
+          ),
           SizedBox(
             height: 20,
           ),
@@ -50,11 +74,48 @@ class _GestureUnlockState extends State<GestureUnlockPage> {
               fit: BoxFit.fill,
               color: const Color(0xffFB2E4E),
             ),
-            answer: [0, 1, 2, 4, 7],
-            color: Colors.grey,
+            answer: _gesture.length > 0
+                ? _gesture.split(',').map<int>((e) => int.parse(e)).toList()
+                : null,
+            color: Colors.lightGreen,
             onComplete: (data) {
+              if (data.length >= 4) {
+                if (_gesture == '') {
+                  _gesture = data.join(',');
+                  setState(() {
+                    _notice = '请再次确认手势';
+                  });
+                } else {
+                  if (_gesture == data.join(',')) {
+                    if ((User().gestureUnlock ?? '') == '') {
+                      setState(() {
+                        _notice = '设置成功！';
+                      });
+                    } else {
+                      setState(() {
+                        _notice = '绘制成功！';
+                      });
+                    }
+                    User().saveGesture(_gesture);
+                  } else {
+                    if ((User().gestureUnlock ?? '') == '') {
+                      setState(() {
+                        _notice = '与上次图案不符，请重试！';
+                      });
+                    } else {
+                      setState(() {
+                        _notice = '密码错误，请重试！';
+                      });
+                    }
+                  }
+                }
+              } else {
+                setState(() {
+                  _notice = '请至少连接4个点';
+                });
+              }
               setState(() {
-                _result = data.join(', ');
+                _result = data.join(',');
               });
             },
           ),
@@ -66,7 +127,7 @@ class _GestureUnlockState extends State<GestureUnlockPage> {
             style: TextStyle(fontSize: 16, color: Colors.black),
           )
         ],
-      ),
+      )),
     );
   }
 }
