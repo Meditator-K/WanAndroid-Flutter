@@ -15,8 +15,8 @@ class ProjectWidget extends StatefulWidget {
 
 class _ProjectWidgetState extends State<ProjectWidget>
     with TickerProviderStateMixin {
-  TabController _tabController;
-  List<ProjectEntity> _projects;
+  late TabController _tabController;
+  List<ProjectEntity> _projects = [];
 
   List<List<ProjectListData>> _projectList = [];
   ScrollController _scrollController = ScrollController();
@@ -42,7 +42,8 @@ class _ProjectWidgetState extends State<ProjectWidget>
   void initTabController() {
     _tabController = TabController(length: _projects.length, vsync: this)
       ..addListener(() {
-        if (_tabController.index.toDouble() == _tabController.animation.value) {
+        if (_tabController.index.toDouble() ==
+            _tabController.animation!.value) {
           //要加这个判断，否则点击tab，会请求两次
           _index = _tabController.index;
           _page = 1;
@@ -101,7 +102,8 @@ class _ProjectWidgetState extends State<ProjectWidget>
       widgets.add(RefreshIndicator(
           child: _projectList[i].length > 0
               ? ListView.separated(
-                  physics: AlwaysScrollableScrollPhysics(),//始终能滚动，否则条目不占满屏幕时无法触发下拉刷新
+                  physics: AlwaysScrollableScrollPhysics(),
+                  //始终能滚动，否则条目不占满屏幕时无法触发下拉刷新
                   itemBuilder: (context, index) =>
                       _itemBuilder(context, index, i),
                   separatorBuilder: (context, index) {
@@ -143,7 +145,7 @@ class _ProjectWidgetState extends State<ProjectWidget>
                                 Expanded(
                                     flex: 4,
                                     child: Text(
-                                      _projectList[i][index].title,
+                                      _projectList[i][index].title ?? '',
                                       maxLines: 1,
                                       overflow: TextOverflow.ellipsis,
                                       style: TextStyle(
@@ -152,10 +154,13 @@ class _ProjectWidgetState extends State<ProjectWidget>
                                 Expanded(
                                     flex: 1,
                                     child: IconButton(
-                                      icon: Icon(_projectList[i][index].collect
-                                          ? Icons.favorite
-                                          : Icons.favorite_border),
-                                      color: _projectList[i][index].collect
+                                      icon: Icon(
+                                          (_projectList[i][index].collect ??
+                                                  false)
+                                              ? Icons.favorite
+                                              : Icons.favorite_border),
+                                      color: (_projectList[i][index].collect ??
+                                              false)
                                           ? Colors.red
                                           : null,
                                       onPressed: () =>
@@ -167,11 +172,11 @@ class _ProjectWidgetState extends State<ProjectWidget>
                             padding: EdgeInsets.all(5.0),
                             child: Row(
                               children: <Widget>[
-                                Text(_projectList[i][index].author),
+                                Text(_projectList[i][index].author ?? ''),
                                 Expanded(
                                   child: Container(),
                                 ),
-                                Text(_projectList[i][index].niceDate),
+                                Text(_projectList[i][index].niceDate ?? ''),
                               ],
                             )),
                       ],
@@ -179,7 +184,7 @@ class _ProjectWidgetState extends State<ProjectWidget>
                     Container(
                       padding: EdgeInsets.fromLTRB(8, 2, 6, 2),
                       child: Image.network(
-                        _projectList[i][index].envelopePic,
+                        _projectList[i][index].envelopePic ?? '',
                         width: 60,
                         height: 100,
                         fit: BoxFit.fill,
@@ -195,9 +200,9 @@ class _ProjectWidgetState extends State<ProjectWidget>
   void _loadTab() {
     HttpManager.getInstance().get(API.PROJECT_URL, null).then((baseEntity) {
       if (baseEntity.code == HttpCode.SUCCESS &&
-          baseEntity.data.errorCode == HttpCode.ERROR_CODE_SUC) {
+          baseEntity.data?.errorCode == HttpCode.ERROR_CODE_SUC) {
         List<ProjectEntity> projects = [];
-        for (var item in baseEntity.data.data) {
+        for (var item in baseEntity.data?.data) {
           ProjectEntity projectEntity = ProjectEntity.fromJson(item);
           projects.add(projectEntity);
         }
@@ -218,17 +223,17 @@ class _ProjectWidgetState extends State<ProjectWidget>
         .getWithCookie(API.getProjectListUrl(_page), params)
         .then((baseEntity) {
       if (baseEntity.code == HttpCode.SUCCESS &&
-          baseEntity.data.errorCode == HttpCode.ERROR_CODE_SUC) {
+          baseEntity.data?.errorCode == HttpCode.ERROR_CODE_SUC) {
         print('项目列表请求成功');
         ProjectListEntity projectListEntity =
-            ProjectListEntity.fromJson(baseEntity.data.data);
+            ProjectListEntity.fromJson(baseEntity.data?.data);
         if (!isInitComplete) {
-          _projectList[_index].addAll(projectListEntity.datas);
+          _projectList[_index].addAll(projectListEntity.datas ?? []);
           initTabController();
         } else {
           setState(() {
             isLoadMore = false;
-            _projectList[_index].addAll(projectListEntity.datas);
+            _projectList[_index].addAll(projectListEntity.datas ?? []);
           });
         }
       } else {
@@ -250,19 +255,22 @@ class _ProjectWidgetState extends State<ProjectWidget>
   void _showArticleDetail(BuildContext context, int index) {
     //点击条目,跳转到webview页面
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return WebViewPage(
-          _projectList[_index][index].title, _projectList[_index][index].link);
+      return WebViewPage(arguments: {
+        'title': _projectList[_index][index].title,
+        'url': _projectList[_index][index].link
+      });
     }));
   }
 
   void _collectArticle(BuildContext context, int index) {
-    int id = _projectList[_index][index].id;
-    DataHelper.collectArticle(context, id, _projectList[_index][index].collect)
+    int id = _projectList[_index][index].id ?? 0;
+    DataHelper.collectArticle(
+            context, id, _projectList[_index][index].collect ?? false)
         .then((isSuccess) {
       if (isSuccess) {
         setState(() {
           _projectList[_index][index].collect =
-              !_projectList[_index][index].collect;
+              !(_projectList[_index][index].collect ?? false);
         });
       }
     });

@@ -1,12 +1,12 @@
 class TreeEntity {
-  int visible;
-  List<Treechild> children;
-  String name;
-  bool userControlSetTop;
-  int id;
-  int courseId;
-  int parentChapterId;
-  int order;
+  int? visible;
+  List<Treechild>? children;
+  String? name;
+  bool? userControlSetTop;
+  int? id;
+  int? courseId;
+  int? parentChapterId;
+  int? order;
 
   TreeEntity(
       {this.visible,
@@ -21,9 +21,9 @@ class TreeEntity {
   TreeEntity.fromJson(Map<String, dynamic> json) {
     visible = json['visible'];
     if (json['children'] != null) {
-      children = new List<Treechild>();
+      children = <Treechild>[];
       (json['children'] as List).forEach((v) {
-        children.add(new Treechild.fromJson(v));
+        children?.add(new Treechild.fromJson(v));
       });
     }
     name = json['name'];
@@ -38,7 +38,7 @@ class TreeEntity {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     data['visible'] = this.visible;
     if (this.children != null) {
-      data['children'] = this.children.map((v) => v.toJson()).toList();
+      data['children'] = this.children?.map((v) => v.toJson()).toList();
     }
     data['name'] = this.name;
     data['userControlSetTop'] = this.userControlSetTop;
@@ -51,14 +51,14 @@ class TreeEntity {
 }
 
 class Treechild {
-  int visible;
-  List<Null> children;
-  String name;
-  bool userControlSetTop;
-  int id;
-  int courseId;
-  int parentChapterId;
-  int order;
+  int? visible;
+  List<Null>? children;
+  String? name;
+  bool? userControlSetTop;
+  int? id;
+  int? courseId;
+  int? parentChapterId;
+  int? order;
 
   Treechild(
       {this.visible,
@@ -73,7 +73,7 @@ class Treechild {
   Treechild.fromJson(Map<String, dynamic> json) {
     visible = json['visible'];
     if (json['children'] != null) {
-      children = new List<Null>();
+      children = <Null>[];
     }
     name = json['name'];
     userControlSetTop = json['userControlSetTop'];

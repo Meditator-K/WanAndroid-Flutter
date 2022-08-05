@@ -131,8 +131,8 @@ class _RegisterPageState extends State<RegisterPage> {
     var params = {'username': account, 'password': pwd, 'repassword': rePwd};
     HttpManager.getInstance().post(API.REGISTER_URL, params).then((baseEntity) {
       if (HttpCode.SUCCESS == baseEntity.code) {
-        BaseData baseData = baseEntity.data;
-        int errorCode = baseData.errorCode;
+        BaseData? baseData = baseEntity.data;
+        int? errorCode = baseData?.errorCode;
         if (errorCode == HttpCode.ERROR_CODE_SUC) {
           print('注册成功');
           ToastUtil.showToast(context, '注册成功');

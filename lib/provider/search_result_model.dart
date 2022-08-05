@@ -37,12 +37,12 @@ class SearchResultModel extends ChangeNotifier {
         .post(API.getSearchUrl(_page), params)
         .then((baseEntity) {
       if (baseEntity.code == HttpCode.SUCCESS &&
-          baseEntity.data.errorCode == HttpCode.ERROR_CODE_SUC) {
+          baseEntity.data?.errorCode == HttpCode.ERROR_CODE_SUC) {
         ArticleEntity articleEntity =
-            ArticleEntity.fromJson(baseEntity.data.data);
-        _currentPage = articleEntity.curPage;
-        _pageCount = articleEntity.pageCount;
-        List<ArticleData> articles = articleEntity.datas;
+            ArticleEntity.fromJson(baseEntity.data?.data);
+        _currentPage = articleEntity.curPage ?? 0;
+        _pageCount = articleEntity.pageCount ?? 0;
+        List<ArticleData> articles = articleEntity.datas ?? [];
         _articles.addAll(articles);
         _isLoadMore = false;
         notifyListeners();
@@ -61,11 +61,11 @@ class SearchResultModel extends ChangeNotifier {
   }
 
   void collectArticle(BuildContext context, int index) {
-    int id = _articles[index].id;
-    DataHelper.collectArticle(context, id, _articles[index].collect)
+    int id = _articles[index].id ?? 0;
+    DataHelper.collectArticle(context, id, _articles[index].collect ?? false)
         .then((isSuccess) {
       if (isSuccess) {
-        _articles[index].collect = !_articles[index].collect;
+        _articles[index].collect = !(_articles[index].collect ?? false);
         notifyListeners();
       }
     });
@@ -74,12 +74,13 @@ class SearchResultModel extends ChangeNotifier {
   void showArticleDetail(BuildContext context, int index) {
     //点击条目,跳转到webview页面
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return WebViewPage(
-          _articles[index]
-              .title
-              .replaceAll("<em class='highlight'>", '')
-              .replaceAll("<\/em>", ''),
-          _articles[index].link);
+      return WebViewPage(arguments: {
+        'title': _articles[index]
+            .title
+            ?.replaceAll("<em class='highlight'>", '')
+            .replaceAll("<\/em>", ''),
+        'url': _articles[index].link
+      });
     }));
   }
 

@@ -17,7 +17,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectIndex = 0;
   String _username = DataKeys.DEFAULT_USERNAME;
-  BuildContext _context;
+  BuildContext? _context;
   bool isBack = false;
 
   List<Widget> _widgets = <Widget>[
@@ -57,13 +57,11 @@ class _HomePageState extends State<HomePage> {
           items: const <BottomNavigationBarItem>[
             BottomNavigationBarItem(
               icon: Icon(Icons.home),
-              title: Text('首页'),
+              label: '首页',
             ),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.equalizer), title: Text('体系')),
-            BottomNavigationBarItem(
-                icon: Icon(Icons.near_me), title: Text('导航')),
-            BottomNavigationBarItem(icon: Icon(Icons.list), title: Text('项目')),
+            BottomNavigationBarItem(icon: Icon(Icons.equalizer), label: '体系'),
+            BottomNavigationBarItem(icon: Icon(Icons.near_me), label: '导航'),
+            BottomNavigationBarItem(icon: Icon(Icons.list), label: '项目'),
           ],
           currentIndex: _selectIndex,
           selectedItemColor: Colors.blue,
@@ -98,6 +96,7 @@ class _HomePageState extends State<HomePage> {
                   ),
                   backgroundColor: Colors.white,
                 ),
+                accountEmail: Container(),
                 accountName: GestureDetector(
                     onTap: _toLogin,
                     child: Text(_username, style: WidgetStyle.BTN_STYLE))),
@@ -128,7 +127,7 @@ class _HomePageState extends State<HomePage> {
       return;
     }
     showDialog(
-        context: _context,
+        context: _context!,
         builder: (_) => AlertDialog(
               title: Text('提示！'),
               content: Text('确认退出吗？'),
@@ -136,14 +135,14 @@ class _HomePageState extends State<HomePage> {
                 FlatButton(
                   child: Text('取消'),
                   onPressed: () {
-                    Navigator.of(_context).pop();
+                    Navigator.of(_context!).pop();
                   },
                 ),
                 FlatButton(
                   child: Text('确定'),
                   onPressed: () {
                     _logout();
-                    Navigator.of(_context).pop();
+                    Navigator.of(_context!).pop();
                   },
                 )
               ],

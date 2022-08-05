@@ -9,8 +9,8 @@ import 'package:wan_android/util/data_helper.dart';
 import 'package:wan_android/util/widget_util.dart';
 
 class TreeDetailPage extends StatefulWidget {
-  TreeEntity treeEntity; //体系文章中的某一类
-  int id; //体系文章中的某一类的某一个tab
+  final TreeEntity treeEntity; //体系文章中的某一类
+  final int id; //体系文章中的某一类的某一个tab
 
   TreeDetailPage(this.treeEntity, this.id);
 
@@ -23,8 +23,8 @@ class TreeDetailPageState extends State<TreeDetailPage>
   TreeEntity treeEntity;
   int id;
 
-  TabController _tabController;
-  List<Treechild> _treeChildren;
+  late TabController _tabController;
+  List<Treechild> _treeChildren = [];
 
   //存储每个tab下的文章列表
   List<List<ArticleData>> _articleList = [];
@@ -37,9 +37,8 @@ class TreeDetailPageState extends State<TreeDetailPage>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    _treeChildren = treeEntity.children;
+    _treeChildren = treeEntity.children ?? [];
     for (var item in _treeChildren) {
       _articleList.add([]);
       if (item.id == id) {
@@ -49,7 +48,8 @@ class TreeDetailPageState extends State<TreeDetailPage>
     _tabController = TabController(
         initialIndex: _index, length: _treeChildren.length, vsync: this)
       ..addListener(() {
-        if (_tabController.index.toDouble() == _tabController.animation.value) {
+        if (_tabController.index.toDouble() ==
+            _tabController.animation!.value) {
           //要加这个判断，否则点击tab，会请求两次
           _index = _tabController.index;
           _page = 0;
@@ -83,7 +83,7 @@ class TreeDetailPageState extends State<TreeDetailPage>
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
-        title: Text(treeEntity.name),
+        title: Text(treeEntity.name ?? ''),
         bottom: TabBar(
           isScrollable: true,
           tabs: _tabWidgets(),
@@ -147,10 +147,10 @@ class TreeDetailPageState extends State<TreeDetailPage>
         .getWithCookie(API.getArticleListUrl(_page), params)
         .then((baseEntity) {
       if (baseEntity.code == HttpCode.SUCCESS &&
-          baseEntity.data.errorCode == HttpCode.ERROR_CODE_SUC) {
+          baseEntity.data?.errorCode == HttpCode.ERROR_CODE_SUC) {
         ArticleEntity articleEntity =
-            ArticleEntity.fromJson(baseEntity.data.data);
-        List<ArticleData> articles = articleEntity.datas;
+            ArticleEntity.fromJson(baseEntity.data?.data);
+        List<ArticleData> articles = articleEntity.datas ?? [];
         setState(() {
           _articleList[_index].addAll(articles);
           isLoadMore = false;
@@ -165,19 +165,22 @@ class TreeDetailPageState extends State<TreeDetailPage>
     //点击条目,跳转到webview页面
     print('点击了文章');
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return WebViewPage(
-          _articleList[_index][index].title, _articleList[_index][index].link);
+      return WebViewPage(arguments: {
+        'title': _articleList[_index][index].title,
+        'url': _articleList[_index][index].link
+      });
     }));
   }
 
   void _collectArticle(BuildContext context, int index) {
-    int id = _articleList[_index][index].id;
-    DataHelper.collectArticle(context, id, _articleList[_index][index].collect)
+    int id = _articleList[_index][index].id ?? 0;
+    DataHelper.collectArticle(
+            context, id, _articleList[_index][index].collect ?? false)
         .then((isSuccess) {
       if (isSuccess) {
         setState(() {
           _articleList[_index][index].collect =
-              !_articleList[_index][index].collect;
+              !(_articleList[_index][index].collect ?? false);
         });
       }
     });

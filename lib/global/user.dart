@@ -2,18 +2,23 @@ import 'package:wan_android/constant/data_keys.dart';
 import 'package:wan_android/util/sp_util.dart';
 
 class User {
-  static final User singleton = User._internal();
+  static User? _instance;
+
+  factory User() => _getInstance();
 
   User._internal();
 
-  factory User() {
-    return singleton;
+  static User _getInstance() {
+    if (_instance == null) {
+      _instance = User._internal();
+    }
+    return _instance!;
   }
 
-  List<String> cookies;
-  String username;
-  bool fingerprintUnlock; //是否设置指纹识别
-  String gestureUnlock; //是否设置手势识别
+  List<String>? cookies;
+  String? username;
+  bool fingerprintUnlock = false; //是否设置指纹识别
+  String? gestureUnlock; //是否设置手势识别
 
   void saveCookies(List<String> cookies) {
     this.cookies = cookies;
@@ -25,12 +30,12 @@ class User {
     SpUtil.putStr(DataKeys.USERNAME, username);
   }
 
-  void saveFingerprint(bool fingerprint){
+  void saveFingerprint(bool fingerprint) {
     this.fingerprintUnlock = fingerprint;
     SpUtil.putBool(DataKeys.FINGERPRINT_UNLOCK, fingerprint);
   }
 
-  void saveGesture(String gesture){
+  void saveGesture(String gesture) {
     this.gestureUnlock = gesture;
     SpUtil.putStr(DataKeys.GESTURE_UNLOCK, gesture);
   }
@@ -59,9 +64,9 @@ class User {
   }
 
   void clearUserInfo() {
-    SpUtil.putStr(DataKeys.USERNAME, null);
-    SpUtil.putStrList(DataKeys.COOKIE, null);
-    this.cookies = null;
-    this.username = null;
+    SpUtil.putStr(DataKeys.USERNAME, '');
+    SpUtil.putStrList(DataKeys.COOKIE, []);
+    this.cookies = [];
+    this.username = '';
   }
 }

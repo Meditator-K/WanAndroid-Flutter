@@ -52,7 +52,7 @@ class _TreeWidgetPage extends State<TreeWidget> {
         Padding(
           padding: EdgeInsets.all(10),
           child: Text(
-            _treeArticles[index].name,
+            _treeArticles[index].name??'',
             style: WidgetStyle.TREE_TITLE_TEXT_STYLE,
           ),
         ),
@@ -72,7 +72,7 @@ class _TreeWidgetPage extends State<TreeWidget> {
 
   List<Widget> getTreeWidget(BuildContext context, int index) {
     List<Widget> widgets = [];
-    for (var tree in _treeArticles[index].children) {
+    for (var tree in _treeArticles[index].children??[]) {
       widgets.add(GestureDetector(
           onTap: () => _toTreeDetail(context, index, tree.id),
           child: Chip(
@@ -100,10 +100,10 @@ class _TreeWidgetPage extends State<TreeWidget> {
   loadTree() {
     HttpManager.getInstance().get(API.TREE_URL, null).then((baseEntity) {
       if (baseEntity.code == HttpCode.SUCCESS &&
-          baseEntity.data.errorCode == HttpCode.ERROR_CODE_SUC) {
+          baseEntity.data?.errorCode == HttpCode.ERROR_CODE_SUC) {
         print('请求体系文章成功');
         List<TreeEntity> treeArticles = [];
-        var trees = baseEntity.data.data;
+        var trees = baseEntity.data?.data;
         for (var item in trees) {
           TreeEntity treeEntity = TreeEntity.fromJson(item);
           treeArticles.add(treeEntity);

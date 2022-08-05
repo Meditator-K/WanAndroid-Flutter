@@ -7,7 +7,7 @@ import 'package:wan_android/global/user.dart';
 import 'package:wan_android/http/api.dart';
 
 class HttpManager {
-  Dio _dio;
+  late Dio _dio;
 
   //单例模式
   HttpManager._internal() {
@@ -21,13 +21,13 @@ class HttpManager {
     _dio = Dio(options);
   }
 
-  static HttpManager _instance;
+  static HttpManager? _instance;
 
   static HttpManager getInstance() {
     if (_instance == null) {
       _instance = HttpManager._internal();
     }
-    return _instance;
+    return _instance!;
   }
 
   ///get请求
@@ -53,7 +53,7 @@ class HttpManager {
   ///get请求,带cookie，与用户相关的请求
   Future<BaseEntity> getWithCookie(url, params) async {
     print('get请求-->url：$url ,body: $params');
-    List<String> cookies = User().cookies;
+    List<String> cookies = User().cookies ?? [];
     Options options = Options(headers: {'Cookie': cookies});
     Response response;
     try {
@@ -99,12 +99,12 @@ class HttpManager {
   ///post请求，带cookie的，与用户相关的请求
   Future<BaseEntity> postWithCookie(url, params) async {
     print('post请求-->url：$url ,body: $params');
-    List<String> cookies = User().cookies;
+    List<String> cookies = User().cookies ?? [];
     Options options = Options(headers: {'Cookie': cookies});
     Response response;
     try {
-      response =
-          await _dio.post(url, data: FormData.fromMap(params), options: options);
+      response = await _dio.post(url,
+          data: FormData.fromMap(params), options: options);
       if (response.statusCode == HttpStatus.ok) {
         print('post请求成功-->response data：${response.data}');
         return BaseEntity(
@@ -130,7 +130,7 @@ class HttpManager {
       );
       if (response.statusCode == HttpStatus.ok) {
         print('post请求成功-->response data：${response.data}');
-        User().saveCookies(response.headers['set-cookie']);
+        User().saveCookies(response.headers['set-cookie'] ?? []);
         return BaseEntity(
             HttpCode.SUCCESS, '', BaseData.fromJson(response.data));
       } else {

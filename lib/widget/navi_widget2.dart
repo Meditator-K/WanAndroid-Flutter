@@ -64,7 +64,8 @@ class _NaviWidgetState extends State<NaviWidget>
                                 List.generate(_naviEntities.length, (index) {
                               if (shouldReloadKeys) {
                                 GlobalKey itemKey = GlobalKey();
-                                itemKeys[_naviEntities[index].name] = itemKey;
+                                itemKeys[_naviEntities[index].name ?? ''] =
+                                    itemKey;
                               }
                               return Padding(
                                 key: itemKeys.values.elementAt(index),
@@ -74,7 +75,7 @@ class _NaviWidgetState extends State<NaviWidget>
                                     Padding(
                                       padding: EdgeInsets.all(5),
                                       child: Text(
-                                        _naviEntities[index].name,
+                                        _naviEntities[index].name ?? '',
                                         style:
                                             WidgetStyle.TREE_TITLE_TEXT_STYLE2,
                                       ),
@@ -117,7 +118,7 @@ class _NaviWidgetState extends State<NaviWidget>
           child: Padding(
             padding: EdgeInsets.fromLTRB(2, 10, 2, 10),
             child: Text(
-              _naviEntities[index].name,
+              _naviEntities[index].name ?? '',
               style: TextStyle(
                   color: _currentIndex == index ? Colors.green : Colors.black),
             ),
@@ -140,11 +141,12 @@ class _NaviWidgetState extends State<NaviWidget>
 
   List<Widget> getWrapWidget(BuildContext context, int index) {
     List<Widget> widgets = [];
-    for (var item in _naviEntities[index].articles) {
+    for (var item in (_naviEntities[index].articles ?? [])) {
       widgets.add(GestureDetector(
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-              return WebViewPage(item.title, item.link);
+              return WebViewPage(
+                  arguments: {'title': item.title, 'url': item.link});
             }));
           },
           child: Chip(
@@ -161,10 +163,10 @@ class _NaviWidgetState extends State<NaviWidget>
         .getWithCookie(API.NAVI_URL, null)
         .then((baseEntity) {
       if (baseEntity.code == HttpCode.SUCCESS &&
-          baseEntity.data.errorCode == HttpCode.ERROR_CODE_SUC) {
+          baseEntity.data?.errorCode == HttpCode.ERROR_CODE_SUC) {
         print('请求导航文章成功');
         List<NaviEntity> naviEntities = [];
-        var navis = baseEntity.data.data;
+        var navis = baseEntity.data?.data;
         for (var item in navis) {
           NaviEntity naviEntity = NaviEntity.fromJson(item);
           naviEntities.add(naviEntity);
@@ -191,27 +193,29 @@ class _NaviWidgetState extends State<NaviWidget>
       if (itemKeys.length != _naviEntities.length) {
         return 0;
       }
-      RenderBox root = rootKey.currentContext.findRenderObject();
+      RenderBox? root =
+          rootKey.currentContext!.findRenderObject() as RenderBox?;
       if (root == null) {
         return 0;
       }
       double rootDy = root.localToGlobal(Offset.zero).dy;
       for (int i = 0; i < itemKeys.length; i++) {
-        BuildContext context = itemKeys.values.elementAt(i).currentContext;
+        BuildContext? context = itemKeys.values.elementAt(i).currentContext;
         if (context == null) {
           return 0;
         }
-        RenderBox renderBox = context.findRenderObject();
+        RenderBox? renderBox = context.findRenderObject() as RenderBox?;
         if (renderBox == null) {
           return 0;
         }
         if (i < itemKeys.length - 1) {
-          BuildContext contextNext =
+          BuildContext? contextNext =
               itemKeys.values.elementAt(i + 1).currentContext;
-          if (context == null) {
+          if (contextNext == null) {
             return 0;
           }
-          RenderBox renderBoxNext = contextNext.findRenderObject();
+          RenderBox? renderBoxNext =
+              contextNext.findRenderObject() as RenderBox?;
           if (renderBoxNext == null) {
             return 0;
           }
@@ -239,17 +243,18 @@ class _NaviWidgetState extends State<NaviWidget>
           typeIndex >= itemKeys.length) {
         return 0;
       }
-      RenderBox root = rootKey.currentContext.findRenderObject();
+      RenderBox? root =
+          rootKey.currentContext!.findRenderObject() as RenderBox?;
       if (root == null) {
         return 0;
       }
       double rootDy = root.localToGlobal(Offset.zero).dy;
-      BuildContext context =
+      BuildContext? context =
           itemKeys.values.elementAt(typeIndex).currentContext;
       if (context == null) {
         return 0;
       }
-      RenderBox renderBox = context.findRenderObject();
+      RenderBox? renderBox = context.findRenderObject() as RenderBox?;
       if (renderBox == null) {
         return 0;
       }

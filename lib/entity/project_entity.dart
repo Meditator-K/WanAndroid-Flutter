@@ -1,19 +1,19 @@
 class ProjectEntity {
-	int visible;
-	List<Null> children;
-	String name;
-	bool userControlSetTop;
-	int id;
-	int courseId;
-	int parentChapterId;
-	int order;
+	int? visible;
+	List<Null>? children;
+	String? name;
+	bool? userControlSetTop;
+	int? id;
+	int? courseId;
+	int? parentChapterId;
+	int? order;
 
 	ProjectEntity({this.visible, this.children, this.name, this.userControlSetTop, this.id, this.courseId, this.parentChapterId, this.order});
 
 	ProjectEntity.fromJson(Map<String, dynamic> json) {
 		visible = json['visible'];
 		if (json['children'] != null) {
-			children = new List<Null>();
+			children = <Null>[];
 		}
 		name = json['name'];
 		userControlSetTop = json['userControlSetTop'];

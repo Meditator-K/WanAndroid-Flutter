@@ -17,10 +17,11 @@ class ToDoPageState extends State<ToDoPage> with TickerProviderStateMixin {
   List<ToDoData> _datas = [];
   List<ToDoData> _toDoSolved = [];
   List<ToDoData> _toDoPending = [];
-  TabController _tabController;
+  late TabController _tabController;
   var _titleController = TextEditingController();
   var _contentController = TextEditingController();
-  String _completeTime = DataFormat.formatDate(DateTime.now(), [DataFormat.yyyy, '-', DataFormat.mm, '-', DataFormat.dd]);
+  String _completeTime = DataFormat.formatDate(DateTime.now(),
+      [DataFormat.yyyy, '-', DataFormat.mm, '-', DataFormat.dd]);
   bool _isAdd = true; //添加还是更新
 
   @override
@@ -117,7 +118,7 @@ class ToDoPageState extends State<ToDoPage> with TickerProviderStateMixin {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
                   Text(
-                    todoList[index].title,
+                    todoList[index].title ?? '',
                     style: WidgetStyle.TREE_TITLE_TEXT_STYLE,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -126,7 +127,7 @@ class ToDoPageState extends State<ToDoPage> with TickerProviderStateMixin {
                     height: 8,
                   ),
                   Text(
-                    todoList[index].content,
+                    todoList[index].content ?? '',
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
@@ -135,7 +136,7 @@ class ToDoPageState extends State<ToDoPage> with TickerProviderStateMixin {
                   ),
                   Row(
                     children: <Widget>[
-                      Text(todoList[index].dateStr),
+                      Text(todoList[index].dateStr ?? ''),
                       Expanded(
                         child: Container(),
                       ),
@@ -183,8 +184,9 @@ class ToDoPageState extends State<ToDoPage> with TickerProviderStateMixin {
     _isAdd = true;
     _titleController.text = '';
     _contentController.text = '';
-    _completeTime = DataFormat.formatDate(DateTime.now(), [DataFormat.yyyy, '-', DataFormat.mm, '-', DataFormat.dd]);
-    _showToDoDialog(context, 0, null);
+    _completeTime = DataFormat.formatDate(DateTime.now(),
+        [DataFormat.yyyy, '-', DataFormat.mm, '-', DataFormat.dd]);
+    _showToDoDialog(context, 0, []);
   }
 
   void _showToDoDialog(
@@ -234,8 +236,13 @@ class ToDoPageState extends State<ToDoPage> with TickerProviderStateMixin {
                                       DateTime.now().add(Duration(days: 30)))
                               .then((dateTime) {
                             state(() {
-                              _completeTime = DataFormat.formatDate(
-                                  dateTime, [DataFormat.yyyy, '-', DataFormat.mm, '-', DataFormat.dd]);
+                              _completeTime = DataFormat.formatDate(dateTime!, [
+                                DataFormat.yyyy,
+                                '-',
+                                DataFormat.mm,
+                                '-',
+                                DataFormat.dd
+                              ]);
                             });
                           });
                         },
@@ -280,7 +287,7 @@ class ToDoPageState extends State<ToDoPage> with TickerProviderStateMixin {
         .postWithCookie(API.ADD_TODO_URL, params)
         .then((baseEntity) {
       if (baseEntity.code == HttpCode.SUCCESS &&
-          baseEntity.data.errorCode == HttpCode.ERROR_CODE_SUC) {
+          baseEntity.data?.errorCode == HttpCode.ERROR_CODE_SUC) {
         print('添加便签成功');
         _onRefresh();
       } else {
@@ -292,9 +299,9 @@ class ToDoPageState extends State<ToDoPage> with TickerProviderStateMixin {
   void _showToDoDetail(
       BuildContext context, int index, List<ToDoData> todoList) {
     _isAdd = false;
-    _titleController.text = todoList[index].title;
-    _contentController.text = todoList[index].content;
-    _completeTime = todoList[index].dateStr;
+    _titleController.text = todoList[index].title ?? '';
+    _contentController.text = todoList[index].content ?? '';
+    _completeTime = todoList[index].dateStr ?? '';
     _showToDoDialog(context, index, todoList);
   }
 
@@ -305,13 +312,13 @@ class ToDoPageState extends State<ToDoPage> with TickerProviderStateMixin {
       ToastUtil.showToast(context, '请输入标题');
       return;
     }
-    int id = todoList[index].id;
+    int id = todoList[index].id ?? 0;
     var params = {'title': title, 'content': content, 'date': _completeTime};
     HttpManager.getInstance()
         .postWithCookie(API.updateToDoUrl(id), params)
         .then((baseEntity) {
       if (baseEntity.code == HttpCode.SUCCESS &&
-          baseEntity.data.errorCode == HttpCode.ERROR_CODE_SUC) {
+          baseEntity.data?.errorCode == HttpCode.ERROR_CODE_SUC) {
         print('更新便签成功');
         _onRefresh();
       } else {
@@ -371,12 +378,12 @@ class ToDoPageState extends State<ToDoPage> with TickerProviderStateMixin {
   }
 
   void _deleteStatus(int index, List<ToDoData> todoList) {
-    int id = todoList[index].id;
+    int id = todoList[index].id ?? 0;
     HttpManager.getInstance()
         .postWithCookie(API.deleteToDoUrl(id), Map<String, dynamic>())
         .then((baseEntity) {
       if (baseEntity.code == HttpCode.SUCCESS &&
-          baseEntity.data.errorCode == HttpCode.ERROR_CODE_SUC) {
+          baseEntity.data?.errorCode == HttpCode.ERROR_CODE_SUC) {
         print('删除便签成功');
         _onRefresh();
       } else {
@@ -386,15 +393,15 @@ class ToDoPageState extends State<ToDoPage> with TickerProviderStateMixin {
   }
 
   void _updateStatus(int index, List<ToDoData> todoList) {
-    int oldStatus = todoList[index].status;
+    int oldStatus = todoList[index].status ?? 0;
     int newStatus = oldStatus == 1 ? 0 : 1;
-    int id = todoList[index].id;
+    int id = todoList[index].id ?? 0;
     var params = {'status': newStatus};
     HttpManager.getInstance()
         .postWithCookie(API.changeToDoStatusUrl(id), params)
         .then((baseEntity) {
       if (baseEntity.code == HttpCode.SUCCESS &&
-          baseEntity.data.errorCode == HttpCode.ERROR_CODE_SUC) {
+          baseEntity.data?.errorCode == HttpCode.ERROR_CODE_SUC) {
         print('更新便签状态成功');
         _onRefresh();
       } else {
@@ -410,9 +417,9 @@ class ToDoPageState extends State<ToDoPage> with TickerProviderStateMixin {
         .getWithCookie(API.getToDoListUrl(_page), params)
         .then((baseEntity) {
       if (baseEntity.code == HttpCode.SUCCESS &&
-          baseEntity.data.errorCode == HttpCode.ERROR_CODE_SUC) {
-        ToDoEntity entity = ToDoEntity.fromJson(baseEntity.data.data);
-        List<ToDoData> datas = entity.datas;
+          baseEntity.data?.errorCode == HttpCode.ERROR_CODE_SUC) {
+        ToDoEntity entity = ToDoEntity.fromJson(baseEntity.data?.data);
+        List<ToDoData> datas = entity.datas ?? [];
         _datas.addAll(datas);
         for (var item in _datas) {
           if (item.status == 1) {

@@ -124,12 +124,12 @@ class SearchPageState extends State<SearchPage> {
   void _getHotkey() {
     HttpManager.getInstance().getWithCookie(API.HOTKEY_URL, null).then((baseEntity) {
       if (baseEntity.code == HttpCode.SUCCESS &&
-          baseEntity.data.errorCode == HttpCode.ERROR_CODE_SUC) {
-        var hotkeyEntities = baseEntity.data.data;
+          baseEntity.data?.errorCode == HttpCode.ERROR_CODE_SUC) {
+        var hotkeyEntities = baseEntity.data?.data;
         List<String> hotkey = [];
         for (var item in hotkeyEntities) {
           HotkeyEntity hotkeyEntity = HotkeyEntity.fromJson(item);
-          hotkey.add(hotkeyEntity.name);
+          hotkey.add(hotkeyEntity.name??'');
         }
         setState(() {
           _hotkey.addAll(hotkey);

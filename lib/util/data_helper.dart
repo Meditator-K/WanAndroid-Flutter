@@ -8,8 +8,8 @@ import 'package:wan_android/util/widget_util.dart';
 class DataHelper {
   static Future<bool> collectArticle(
       BuildContext context, int id, bool isCollected) async {
-    List<String> cookies = User().cookies;
-    if (cookies == null) {
+    List<String> cookies = User().cookies ?? [];
+    if (cookies.isEmpty) {
       print('尚未登录');
       Navigator.pushNamed(context, '/LoginPage');
       return false;
@@ -21,7 +21,7 @@ class DataHelper {
             Map<String, dynamic>())
         .then((baseEntity) {
       if (baseEntity.code == HttpCode.SUCCESS &&
-          baseEntity.data.errorCode == HttpCode.ERROR_CODE_SUC) {
+          baseEntity.data?.errorCode == HttpCode.ERROR_CODE_SUC) {
         print((isCollected ? '取消' : '') + '收藏文章成功');
         ToastUtil.showToast(context, (isCollected ? '取消' : '') + '收藏成功');
         isSuccess = true;

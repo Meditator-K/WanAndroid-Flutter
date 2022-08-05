@@ -54,7 +54,7 @@ class MyApp extends StatelessWidget {
         '/SearchPage': (context) => SearchPage(),
         '/CollectListPage': (context) => CollectListPage(),
         '/ToDoPage': (context) => ToDoPage(),
-        '/FingerprintLoginPage': (context) => FingerprintLoginPage(),
+        // '/FingerprintLoginPage': (context) => FingerprintLoginPage(),
         '/GestureUnlockPage': (context) => GestureUnlockPage(),
       },
     );

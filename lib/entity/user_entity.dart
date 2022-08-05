@@ -1,15 +1,15 @@
 class UserEntity {
-  String password;
-  List<Null> chapterTops;
-  String icon;
-  String nickname;
-  bool admin;
-  List<Null> collectIds;
-  int id;
-  int type;
-  String email;
-  String token;
-  String username;
+  String? password;
+  List<Null>? chapterTops;
+  String? icon;
+  String? nickname;
+  bool? admin;
+  List<Null>? collectIds;
+  int? id;
+  int? type;
+  String? email;
+  String? token;
+  String? username;
 
   UserEntity(
       {this.password,
@@ -27,13 +27,13 @@ class UserEntity {
   UserEntity.fromJson(Map<String, dynamic> json) {
     password = json['password'];
     if (json['chapterTops'] != null) {
-      chapterTops = new List<Null>();
+      chapterTops = <Null>[];
     }
     icon = json['icon'];
     nickname = json['nickname'];
     admin = json['admin'];
     if (json['collectIds'] != null) {
-      collectIds = new List<Null>();
+      collectIds = <Null>[];
     }
     id = json['id'];
     type = json['type'];

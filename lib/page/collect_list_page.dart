@@ -70,8 +70,10 @@ class _CollectListPageState extends State<CollectListPage> {
       return InkWell(
         onTap: () =>
             Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-          return WebViewPage(
-              _collectList[index].title, _collectList[index].link);
+          return WebViewPage(arguments: {
+            'title': _collectList[index].title,
+            'url': _collectList[index].link
+          });
         })),
         onLongPress: () => _onItemLongPress(context, index),
         child: Padding(
@@ -80,7 +82,7 @@ class _CollectListPageState extends State<CollectListPage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: <Widget>[
               Text(
-                _collectList[index].title,
+                _collectList[index].title??'',
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(fontWeight: FontWeight.bold),
@@ -90,11 +92,11 @@ class _CollectListPageState extends State<CollectListPage> {
               ),
               Row(
                 children: <Widget>[
-                  Text(_collectList[index].author),
+                  Text(_collectList[index].author??''),
                   Expanded(
                     child: Container(),
                   ),
-                  Text(_collectList[index].niceDate),
+                  Text(_collectList[index].niceDate??''),
                 ],
               )
             ],
@@ -131,7 +133,7 @@ class _CollectListPageState extends State<CollectListPage> {
   }
 
   void _unCollect(int index) {
-    DataHelper.collectArticle(context, _collectList[index].originId, true)
+    DataHelper.collectArticle(context, _collectList[index].originId??0, true)
         .then((isSuccess) {
       if (isSuccess) {
         setState(() {
@@ -146,11 +148,11 @@ class _CollectListPageState extends State<CollectListPage> {
         .getWithCookie(API.getCollectListUrl(_page), Map<String, dynamic>())
         .then((baseEntity) {
       if (baseEntity.code == HttpCode.SUCCESS &&
-          baseEntity.data.errorCode == HttpCode.ERROR_CODE_SUC) {
+          baseEntity.data?.errorCode == HttpCode.ERROR_CODE_SUC) {
         CollectEntity collectEntity =
-            CollectEntity.fromJson(baseEntity.data.data);
+            CollectEntity.fromJson(baseEntity.data?.data);
         setState(() {
-          _collectList.addAll(collectEntity.datas);
+          _collectList.addAll(collectEntity.datas??[]);
           _isLoadMore = false;
         });
       } else {

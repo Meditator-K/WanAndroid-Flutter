@@ -91,12 +91,12 @@ class _ResultPageState extends State<SearchResultPage> {
   }
 
   void _collectArticle(BuildContext context, int index) {
-    int id = _articles[index].id;
-    DataHelper.collectArticle(context, id, _articles[index].collect)
+    int id = _articles[index].id??0;
+    DataHelper.collectArticle(context, id, _articles[index].collect??false)
         .then((isSuccess) {
       if (isSuccess) {
         setState(() {
-          _articles[index].collect = !_articles[index].collect;
+          _articles[index].collect = !(_articles[index].collect??false);
         });
       }
     });
@@ -106,12 +106,13 @@ class _ResultPageState extends State<SearchResultPage> {
     //点击条目,跳转到webview页面
     print('点击了文章');
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return WebViewPage(
-          _articles[index]
-              .title
-              .replaceAll("<em class='highlight'>", '')
-              .replaceAll("<\/em>", ''),
-          _articles[index].link);
+      return WebViewPage(arguments: {
+        'title': _articles[index]
+            .title
+            ?.replaceAll("<em class='highlight'>", '')
+            .replaceAll("<\/em>", ''),
+        'url': _articles[index].link
+      });
     }));
   }
 
@@ -121,10 +122,10 @@ class _ResultPageState extends State<SearchResultPage> {
         .post(API.getSearchUrl(page), params)
         .then((baseEntity) {
       if (baseEntity.code == HttpCode.SUCCESS &&
-          baseEntity.data.errorCode == HttpCode.ERROR_CODE_SUC) {
+          baseEntity.data?.errorCode == HttpCode.ERROR_CODE_SUC) {
         ArticleEntity articleEntity =
-            ArticleEntity.fromJson(baseEntity.data.data);
-        List<ArticleData> articles = articleEntity.datas;
+            ArticleEntity.fromJson(baseEntity.data?.data);
+        List<ArticleData> articles = articleEntity.datas??[];
         setState(() {
           _articles.addAll(articles);
           isLoadMore = false;

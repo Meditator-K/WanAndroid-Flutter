@@ -1,93 +1,150 @@
+import 'dart:collection';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+import '../util/log_util.dart';
+import '../widget/common_widget.dart';
 
 class WebViewPage extends StatefulWidget {
-  String title;
-  String url;
+  final Map<String, dynamic> arguments;
 
-  WebViewPage(this.title, this.url);
+  WebViewPage({Key? key, required this.arguments}) : super(key: key);
 
   @override
-  WebPageState createState() => WebPageState(this.title, this.url);
+  _WebViewPageState createState() => new _WebViewPageState();
 }
 
-class WebPageState extends State<WebViewPage> {
-  String title;
-  String url;
-  FlutterWebviewPlugin webviewPlugin = FlutterWebviewPlugin();
+class _WebViewPageState extends State<WebViewPage> {
+  String _title = "";
+  String _url = "";
+  late PullToRefreshController _pullToRefreshController;
+  double _loadProgress = 0;
+  InAppWebViewController? _webViewController;
 
-//  final Completer<WebViewController> _controller =
-//      Completer<WebViewController>();
-
-  WebPageState(this.title, this.url);
+  InAppWebViewGroupOptions _options = InAppWebViewGroupOptions(
+      crossPlatform: InAppWebViewOptions(
+        useShouldOverrideUrlLoading: true,
+        mediaPlaybackRequiresUserGesture: false,
+        clearCache: true,
+        cacheEnabled: false,
+      ),
+      android: AndroidInAppWebViewOptions(
+        useHybridComposition: true,
+      ),
+      ios: IOSInAppWebViewOptions(
+          allowsInlineMediaPlayback: true,
+          alwaysBounceVertical: true,
+          suppressesIncrementalRendering: true,
+          ignoresViewportScaleLimits: true));
 
   @override
-  Widget build(BuildContext context) {
-    // TODO: implement build
-    print('title:$title');
-    print('url:$url');
-    return WebviewScaffold(
-      url: url,
-      withJavascript: true,
-      withZoom: false,
-      withLocalStorage: true,
-      appBar: AppBar(
-        title: Text(
-          title,
-          style: TextStyle(fontSize: 16),
-        ),
-        actions: <Widget>[
-          IconButton(
-            icon: Icon(Icons.refresh),
-            onPressed: () {
-              webviewPlugin.reload();
-            },
-          )
-        ],
+  void initState() {
+    super.initState();
+    _title = widget.arguments['title'] ?? '';
+    _url = widget.arguments['url'] ?? '';
+
+    _pullToRefreshController = PullToRefreshController(
+      options: PullToRefreshOptions(
+        color: Colors.blue,
       ),
+      onRefresh: () async {
+        if (Platform.isAndroid) {
+          _webViewController?.reload();
+        } else if (Platform.isIOS) {
+          _webViewController?.loadUrl(
+              urlRequest: URLRequest(url: await _webViewController?.getUrl()));
+        }
+      },
     );
-//      Scaffold(
-//        appBar: AppBar(
-//          title: Text(
-//            title,
-//            style: TextStyle(fontSize: 16),
-//          ),
-//          actions: <Widget>[
-//            PopupMenuButton<String>(
-//              onSelected: (String value) {
-////                _controller.future.then((webViewController){
-////                  //刷新页面
-////                  webViewController.loadUrl(url);
-////                });
-//              },
-//              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-//                PopupMenuItem(
-//                  child: Text('刷新'),
-//                  value: '刷新',
-//                )
-//              ],
-//              offset: Offset(0.0, 50.0),
-//              padding: EdgeInsets.zero,
-//            )
-//          ],
-//        ),
-//        body:
-//        Builder(builder: (BuildContext context) {
-//          return WebView(
-//            initialUrl: url,
-//            javascriptMode: JavascriptMode.unrestricted,
-//            onWebViewCreated: (WebViewController controller) {
-//              _controller.complete(controller);
-//            },
-//          );
-//        }
-//        ));
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
-    webviewPlugin.close();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return WillPopScope(
+        onWillPop: () {
+          //isLeadingClick是否使用待定
+          return _goBack(context, isLeadingClick: true);
+        },
+        child: Scaffold(
+          backgroundColor: Colors.white,
+          appBar: commonAppbar(_title),
+          body: Stack(
+            children: [
+              InAppWebView(
+                initialUrlRequest: URLRequest(url: Uri.parse(_url)),
+                initialUserScripts: UnmodifiableListView<UserScript>([]),
+                initialOptions: _options,
+                pullToRefreshController: _pullToRefreshController,
+                onWebViewCreated: (controller) {
+                  _webViewController = controller;
+                },
+                onLoadStart: (controller, url) {},
+                androidOnPermissionRequest:
+                    (controller, origin, resources) async {
+                  return PermissionRequestResponse(
+                      resources: resources,
+                      action: PermissionRequestResponseAction.GRANT);
+                },
+                shouldOverrideUrlLoading: (controller, navigationAction) async {
+                  var uri = navigationAction.request.url!;
+                  LogUtil.d('url:${uri.toString()}');
+                  if (uri.toString().contains('tel:')) {
+                    //拨打电话
+                    LogUtil.d('拨打电话');
+                    await launchUrl(Uri.parse(uri.toString()));
+                    return NavigationActionPolicy.CANCEL;
+                  }
+                  if (uri.toString().startsWith('alipays') ||
+                      uri.toString().startsWith('alipay://')) {
+                    //打开支付宝
+                    await launchUrl(Uri.parse(uri.toString()));
+                    return NavigationActionPolicy.CANCEL;
+                  }
+                  return NavigationActionPolicy.ALLOW;
+                },
+                onLoadStop: (controller, url) async {
+                  _pullToRefreshController.endRefreshing();
+                },
+                onLoadError: (controller, url, code, message) {
+                  _pullToRefreshController.endRefreshing();
+                },
+                onProgressChanged: (controller, progress) {
+                  if (progress == 100) {
+                    _pullToRefreshController.endRefreshing();
+                  }
+                  setState(() {
+                    this._loadProgress = progress / 100;
+                  });
+                },
+                onConsoleMessage: (controller, consoleMessage) {
+                  LogUtil.d('webview日志：$consoleMessage');
+                },
+              ),
+              _loadProgress < 1.0
+                  ? LinearProgressIndicator(
+                      value: _loadProgress, color: Colors.blue, minHeight: 3)
+                  : Container(),
+            ],
+          ),
+        ));
+  }
+
+  //点击左上方返回箭头或全面屏返回手势
+  Future<bool> _goBack(BuildContext context, {isLeadingClick = true}) async {
+    if (_webViewController != null &&
+        (await _webViewController?.canGoBack()) == true) {
+      _webViewController?.goBack();
+      return false;
+    }
+    if (Navigator.of(context).canPop()) Navigator.of(context).pop();
+    return true;
   }
 }

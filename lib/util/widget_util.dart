@@ -4,8 +4,7 @@ import 'package:wan_android/entity/article_entity.dart';
 
 class ToastUtil {
   static showToast(BuildContext context, String msg) {
-    Toast.show(msg, context,
-        duration: Toast.LENGTH_SHORT, gravity: Toast.BOTTOM);
+    Toast.show(msg, duration: Toast.lengthLong, gravity: Toast.center);
   }
 }
 
@@ -38,9 +37,10 @@ Widget cardWidget(BuildContext context, int index, List<ArticleData> articles,
                             flex: 4,
                             child: Text(
                               articles[index]
-                                  .title
-                                  .replaceAll("<em class='highlight'>", '')
-                                  .replaceAll("<\/em>", ''),
+                                      .title
+                                      ?.replaceAll("<em class='highlight'>", '')
+                                      .replaceAll("<\/em>", '') ??
+                                  '',
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: TextStyle(fontWeight: FontWeight.bold),
@@ -48,11 +48,12 @@ Widget cardWidget(BuildContext context, int index, List<ArticleData> articles,
                         Expanded(
                             flex: 1,
                             child: IconButton(
-                              icon: Icon(articles[index].collect
+                              icon: Icon((articles[index].collect ?? false)
                                   ? Icons.favorite
                                   : Icons.favorite_border),
-                              color:
-                                  articles[index].collect ? Colors.red : null,
+                              color: (articles[index].collect ?? false)
+                                  ? Colors.red
+                                  : null,
                               onPressed: () => collectArticle(context, index),
                             ))
                       ],
@@ -61,11 +62,11 @@ Widget cardWidget(BuildContext context, int index, List<ArticleData> articles,
                     padding: EdgeInsets.all(5.0),
                     child: Row(
                       children: <Widget>[
-                        Text(articles[index].author),
+                        Text(articles[index].author ?? ''),
                         Expanded(
                           child: Container(),
                         ),
-                        Text(articles[index].niceDate),
+                        Text(articles[index].niceDate ?? ''),
                       ],
                     )),
               ],

@@ -1,9 +1,9 @@
 class HotkeyEntity {
-	int visible;
-	String link;
-	String name;
-	int id;
-	int order;
+	int? visible;
+	String? link;
+	String? name;
+	int? id;
+	int? order;
 
 	HotkeyEntity({this.visible, this.link, this.name, this.id, this.order});
 

@@ -53,7 +53,7 @@ class _NaviWidgetState extends State<NaviWidget> {
         Padding(
           padding: EdgeInsets.all(10),
           child: Text(
-            _naviEntities[index].name,
+            _naviEntities[index].name ?? '',
             style: WidgetStyle.TREE_TITLE_TEXT_STYLE,
           ),
         ),
@@ -73,17 +73,18 @@ class _NaviWidgetState extends State<NaviWidget> {
 
   List<Widget> getTreeWidget(BuildContext context, int index) {
     List<Widget> widgets = [];
-    for (var item in _naviEntities[index].articles) {
+    for (var item in (_naviEntities[index].articles ?? [])) {
       widgets.add(GestureDetector(
           onTap: () {
             Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-              return WebViewPage(item.title, item.link);
+              return WebViewPage(
+                  arguments: {'title': item.title, 'url': item.link});
             }));
           },
           child: Chip(
               backgroundColor: WidgetStyle.getRandomColor(),
               label: Text(
-                item.title,
+                item.title ?? '',
               ))));
     }
     return widgets;
@@ -94,10 +95,10 @@ class _NaviWidgetState extends State<NaviWidget> {
         .getWithCookie(API.NAVI_URL, null)
         .then((baseEntity) {
       if (baseEntity.code == HttpCode.SUCCESS &&
-          baseEntity.data.errorCode == HttpCode.ERROR_CODE_SUC) {
+          baseEntity.data?.errorCode == HttpCode.ERROR_CODE_SUC) {
         print('请求导航文章成功');
         List<NaviEntity> naviEntities = [];
-        var navis = baseEntity.data.data;
+        var navis = baseEntity.data?.data;
         for (var item in navis) {
           NaviEntity naviEntity = NaviEntity.fromJson(item);
           naviEntities.add(naviEntity);

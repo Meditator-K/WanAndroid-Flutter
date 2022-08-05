@@ -1,7 +1,7 @@
 class BaseEntity {
-  BaseData data;
-  int code;
-  String msg;
+  BaseData? data;
+  int? code;
+  String? msg;
 
   BaseEntity(this.code, this.msg, this.data);
 
@@ -14,7 +14,7 @@ class BaseEntity {
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
     if (this.data != null) {
-      data['_data'] = this.data.toJson();
+      data['_data'] = this.data?.toJson();
     }
     data['_code'] = this.code;
     data['_msg'] = this.msg;
@@ -24,8 +24,8 @@ class BaseEntity {
 
 class BaseData {
   dynamic data;
-  int errorCode;
-  String errorMsg;
+  int? errorCode;
+  String? errorMsg;
 
   BaseData({this.data, this.errorCode, this.errorMsg});
 

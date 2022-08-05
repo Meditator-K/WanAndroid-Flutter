@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:flutter_swiper_null_safety_flutter3/flutter_swiper_null_safety_flutter3.dart';
 import 'package:wan_android/constant/http_code.dart';
 import 'package:wan_android/entity/article_entity.dart';
 import 'package:wan_android/entity/banner_entity.dart';
@@ -60,7 +60,7 @@ class _HomeWidgetState extends State<HomeWidget> {
                                 itemBuilder: (BuildContext context, int index) {
                                   return _banners.length > 0
                                       ? Image.network(
-                                          _banners[index].imagePath,
+                                          _banners[index].imagePath??'',
                                           fit: BoxFit.fitWidth,
                                         )
                                       : Container();
@@ -116,9 +116,9 @@ class _HomeWidgetState extends State<HomeWidget> {
     //获取首页banner信息
     HttpManager.getInstance().get(API.BANNER_URL, null).then((baseEntity) {
       if (baseEntity.code == HttpCode.SUCCESS &&
-          baseEntity.data.errorCode == HttpCode.ERROR_CODE_SUC) {
+          baseEntity.data?.errorCode == HttpCode.ERROR_CODE_SUC) {
         List<BannerEntity> banners = [];
-        var bannerList = baseEntity.data.data;
+        var bannerList = baseEntity.data?.data;
         for (var item in bannerList) {
           BannerEntity bannerEntity = BannerEntity.fromJson(item);
           banners.add(bannerEntity);
@@ -138,10 +138,10 @@ class _HomeWidgetState extends State<HomeWidget> {
         .getWithCookie(API.getArticleListUrl(_page), null)
         .then((baseEntity) {
       if (baseEntity.code == HttpCode.SUCCESS &&
-          baseEntity.data.errorCode == HttpCode.ERROR_CODE_SUC) {
+          baseEntity.data?.errorCode == HttpCode.ERROR_CODE_SUC) {
         ArticleEntity articleEntity =
-            ArticleEntity.fromJson(baseEntity.data.data);
-        List<ArticleData> articles = articleEntity.datas;
+            ArticleEntity.fromJson(baseEntity.data?.data);
+        List<ArticleData> articles = articleEntity.datas??[];
         setState(() {
           _isLoadMore = false;
           _articles.addAll(articles);
@@ -163,17 +163,20 @@ class _HomeWidgetState extends State<HomeWidget> {
   void onBannerClick(BuildContext context, int index) {
     print('点击了banner');
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return WebViewPage(_banners[index].title, _banners[index].url);
+      return WebViewPage(arguments: {
+        'title': _banners[index].title,
+        'url': _banners[index].url
+      });
     }));
   }
 
   void _collectArticle(BuildContext context, int index) {
-    int id = _articles[index].id;
-    DataHelper.collectArticle(context, id, _articles[index].collect)
+    int id = _articles[index].id??0;
+    DataHelper.collectArticle(context, id, _articles[index].collect??false)
         .then((isSuccess) {
       if (isSuccess) {
         setState(() {
-          _articles[index].collect = !_articles[index].collect;
+          _articles[index].collect = !(_articles[index].collect??false);
         });
       }
     });
@@ -183,7 +186,10 @@ class _HomeWidgetState extends State<HomeWidget> {
     //点击条目,跳转到webview页面
     print('点击了文章');
     Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return WebViewPage(_articles[index].title, _articles[index].link);
+      return WebViewPage(arguments: {
+        'title': _articles[index].title,
+        'url': _articles[index].link
+      });
     }));
   }
 

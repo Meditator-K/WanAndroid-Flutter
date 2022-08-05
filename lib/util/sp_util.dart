@@ -6,7 +6,7 @@ class SpUtil {
     sp.setString(key, value);
   }
 
-  static Future<String> getStr(String key) async {
+  static Future<String?> getStr(String key) async {
     SharedPreferences sp = await SharedPreferences.getInstance();
     return sp.getString(key);
   }
@@ -16,7 +16,7 @@ class SpUtil {
     sp.setInt(key, value);
   }
 
-  static Future<int> getInt(String key) async {
+  static Future<int?> getInt(String key) async {
     SharedPreferences sp = await SharedPreferences.getInstance();
     return sp.getInt(key);
   }
@@ -26,7 +26,7 @@ class SpUtil {
     sp.setStringList(key, value);
   }
 
-  static Future<List<String>> getStrList(String key) async {
+  static Future<List<String>?> getStrList(String key) async {
     SharedPreferences sp = await SharedPreferences.getInstance();
     return sp.getStringList(key);
   }
@@ -36,7 +36,7 @@ class SpUtil {
     sp.setBool(key, value);
   }
 
-  static Future<bool> getBool(String key) async {
+  static Future<bool?> getBool(String key) async {
     SharedPreferences sp = await SharedPreferences.getInstance();
     return sp.getBool(key);
   }
