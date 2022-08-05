@@ -7,6 +7,8 @@ import 'package:wan_android/http/api.dart';
 import 'package:wan_android/http/http_manager.dart';
 import 'package:wan_android/util/widget_util.dart';
 
+import '../util/toast_util.dart';
+
 class ToDoPage extends StatefulWidget {
   @override
   ToDoPageState createState() => ToDoPageState();
@@ -279,7 +281,7 @@ class ToDoPageState extends State<ToDoPage> with TickerProviderStateMixin {
     String title = _titleController.text;
     String content = _contentController.text;
     if (title.isEmpty) {
-      ToastUtil.showToast(context, '请输入标题');
+      ToastUtil.showToast( '请输入标题');
       return;
     }
     var params = {'title': title, 'content': content, 'date': _completeTime};
@@ -309,7 +311,7 @@ class ToDoPageState extends State<ToDoPage> with TickerProviderStateMixin {
     String title = _titleController.text;
     String content = _contentController.text;
     if (title.isEmpty) {
-      ToastUtil.showToast(context, '请输入标题');
+      ToastUtil.showToast( '请输入标题');
       return;
     }
     int id = todoList[index].id ?? 0;

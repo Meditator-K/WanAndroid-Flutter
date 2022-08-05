@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:local_auth/local_auth.dart';
 import 'package:wan_android/constant/http_code.dart';
-import 'package:wan_android/constant/widget_style.dart';
 import 'package:wan_android/entity/base_entity.dart';
 import 'package:wan_android/entity/user_entity.dart';
+import 'package:wan_android/global/screen_info.dart';
 import 'package:wan_android/global/user.dart';
 import 'package:wan_android/http/api.dart';
 import 'package:wan_android/http/http_manager.dart';
-import 'package:wan_android/util/widget_util.dart';
+import 'package:wan_android/widget/button_widget.dart';
+import 'package:wan_android/widget/common_widget.dart';
+
+import '../util/toast_util.dart';
 
 class LoginPage extends StatefulWidget {
   @override
@@ -17,16 +19,12 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   var _accountController = TextEditingController();
   var _pwdController = TextEditingController();
-  bool _isHidePwd = true;
-  final LocalAuthentication auth = LocalAuthentication();
+  ValueNotifier<bool> _showPwd = ValueNotifier(false);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: Text('登录'),
-          centerTitle: true,
-        ),
+        appBar: commonAppbar('登录'),
         body: Padding(
             padding: EdgeInsets.all(20.0),
             child: SingleChildScrollView(
@@ -38,105 +36,48 @@ class _LoginPageState extends State<LoginPage> {
                       prefixIcon: Icon(Icons.account_box),
                       suffixIcon: IconButton(
                         icon: Icon(Icons.cancel),
-                        onPressed: _clearAccount,
+                        onPressed: () => _accountController.text = '',
                       ),
                       hintText: '请输入账号'),
                 ),
-                TextField(
-                  controller: _pwdController,
-                  decoration: InputDecoration(
-                      prefixIcon: Icon(Icons.lock),
-                      suffixIcon: IconButton(
-                        icon: Icon(Icons.remove_red_eye),
-                        onPressed: _showPwd,
-                      ),
-                      hintText: '请输入密码'),
-                  obscureText: _isHidePwd,
-                ),
-                Container(
-                  height: 30,
-                  color: Colors.transparent,
-                ),
-                Flex(
-                  direction: Axis.horizontal,
-                  children: <Widget>[
-                    Expanded(
-                      flex: 1,
-                      child: RaisedButton(
-                        child: Text('登录', style: WidgetStyle.BTN_STYLE),
-                        onPressed: () {
-                          _doLogin(context);
-                        },
-                        color: Colors.lightBlue,
-                      ),
-                    )
-                  ],
-                ),
-                Flex(
-                  direction: Axis.horizontal,
-                  children: <Widget>[
-                    Expanded(
-                      flex: 1,
-                      child: RaisedButton(
-                        child: Text('注册', style: WidgetStyle.BTN_STYLE),
-                        onPressed: _toRegister,
-                        color: Colors.lightBlue,
-                      ),
-                    )
-                  ],
-                ),
-                Flex(
-                  direction: Axis.horizontal,
-                  children: <Widget>[
-                    Expanded(
-                      flex: 1,
-                      child: RaisedButton(
-                        child: Text('指纹登录', style: WidgetStyle.BTN_STYLE),
-                        onPressed: _toFingerprintLogin,
-                        color: Colors.lightBlue,
-                      ),
-                    )
-                  ],
-                ),
-                Flex(
-                  direction: Axis.horizontal,
-                  children: <Widget>[
-                    Expanded(
-                      flex: 1,
-                      child: RaisedButton(
-                        child: Text('手势登录', style: WidgetStyle.BTN_STYLE),
-                        onPressed: _toGestureLogin,
-                        color: Colors.lightBlue,
-                      ),
-                    )
-                  ],
-                ),
+                ValueListenableBuilder(
+                    valueListenable: _showPwd,
+                    builder: (context, bool value, child) {
+                      return TextField(
+                          controller: _pwdController,
+                          decoration: InputDecoration(
+                            prefixIcon: Icon(Icons.lock),
+                            suffixIcon: IconButton(
+                              icon: Icon(value
+                                  ? Icons.visibility
+                                  : Icons.visibility_off),
+                              onPressed: () => _showPwd.value = !_showPwd.value,
+                            ),
+                            hintText: '请输入密码',
+                          ),
+                          obscureText: !value);
+                    }),
+                const SizedBox(height: 50),
+                SizedBox(
+                    width: ScreenInfo().screenWidth - 80,
+                    height: 40,
+                    child: elevatedBtn('登录', onPress: () => _doLogin(context))),
+                const SizedBox(height: 20),
+                SizedBox(
+                    width: ScreenInfo().screenWidth - 80,
+                    height: 40,
+                    child: elevatedBtn('注册',
+                        padding: EdgeInsets.only(left: 50, right: 50),
+                        onPress: () => _toRegister(context))),
               ],
             ))));
-  }
-
-  _clearAccount() {
-    _accountController.text = '';
-  }
-
-  _showPwd() {
-    if (_pwdController.text.isEmpty) {
-      return;
-    }
-    setState(() {
-      if (_isHidePwd) {
-        _isHidePwd = false;
-      } else {
-        _isHidePwd = true;
-      }
-    });
   }
 
   void _doLogin(BuildContext context) async {
     var account = _accountController.text;
     var pwd = _pwdController.text;
     if (account.isEmpty || pwd.isEmpty) {
-      ToastUtil.showToast(context, '请输入账号和密码');
+      ToastUtil.showToast('请输入账号和密码');
       return;
     }
     var params = {'username': account, 'password': pwd};
@@ -146,85 +87,26 @@ class _LoginPageState extends State<LoginPage> {
       BaseData? baseData = baseEntity.data;
       int? errorCode = baseData?.errorCode;
       if (errorCode == HttpCode.ERROR_CODE_SUC) {
-        print('登录成功');
-        ToastUtil.showToast(context, '登录成功');
+        ToastUtil.showToast('登录成功');
         UserEntity userEntity = UserEntity.fromJson(baseData?.data);
         //账号和id保存在本地,跳转到首页
-        User().saveUsername(userEntity.username??'');
-        //检测当前设备是否支持指纹
-        bool isDeviceSupport = await auth.isDeviceSupported();
-        if (isDeviceSupport) {
-          //支持指纹或面部识别
-          onShowDialog(context, "检测到您的设备支持指纹或扫脸识别，是否开启，以便下次快速登录？", () {
-            //用户取消设置指纹
-            onShowDialog(context, '是否设置手势图案快速登录？', () {
-              //用户取消设置图案，关闭登录页
-              Navigator.pop(context);
-            }, () => _setGesture(context));
-          }, () => _setFingerprint(context));
-        } else {
-          //不支持生物识别，提示设置手势识别
-          onShowDialog(context, '是否设置手势图案快速登录？', () {
-            //用户取消设置图案，关闭登录页
-            Navigator.pop(context);
-          }, () => _setGesture(context));
-        }
+        User().saveUsername(userEntity.username ?? '');
       } else {
-        print('登录失败');
-        ToastUtil.showToast(context, '登录失败:$errorCode');
+        ToastUtil.showToast('登录失败:$errorCode');
       }
     } else {
-      print('登录失败');
-      ToastUtil.showToast(context, '登录失败:${baseEntity.msg}');
+      ToastUtil.showToast('登录失败:${baseEntity.msg}');
     }
   }
 
-  void _toRegister() {
+  void _toRegister(context) {
     //跳转到注册页面
     Navigator.pushNamed(context, '/RegisterPage');
   }
 
-  void _toFingerprintLogin() {
-    Navigator.pushNamed(context, '/FingerprintLoginPage');
+  @override
+  void dispose() {
+    super.dispose();
+    _showPwd.dispose();
   }
-
-  void _toGestureLogin() {
-    Navigator.pushNamed(context, '/GestureUnlockPage');
-  }
-
-  void _setFingerprint(context) async {
-    //设置指纹登录
-    //弹框汉化
-    // try {
-    //   const androidAuth = const AndroidAuthMessages(
-    //         cancelButton: '取消',
-    //         goToSettingsButton: '去设置',
-    //         goToSettingsDescription: '请设置指纹.',
-    //         biometricHint: '身份校验',
-    //         signInTitle: '指纹验证',
-    //       );
-    //   bool authenticated = await auth.authenticate(
-    //           localizedReason:
-    //           '扫描指纹进行身份识别',
-    //           useErrorDialogs: false,
-    //           stickyAuth: true,
-    //           androidAuthStrings: androidAuth,
-    //           biometricOnly: true);
-    //   if(authenticated){
-    //     //识别成功，记录状态，关闭登录页
-    //     User().saveFingerprint(true);
-    //     Navigator.pop(context);
-    //   }else{
-    //     //识别失败，提示设置手势
-    //     onShowDialog(context, '是否设置手势图案快速登录？', (){
-    //       //用户取消设置图案，关闭登录页
-    //       Navigator.pop(context);
-    //     }, ()=>_setGesture(context));
-    //   }
-    // } on PlatformException catch (e) {
-    //   print(e);
-    // }
-  }
-
-  void _setGesture(context) {}
 }

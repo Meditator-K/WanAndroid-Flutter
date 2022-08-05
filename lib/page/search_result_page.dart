@@ -7,6 +7,8 @@ import 'package:wan_android/page/web_page.dart';
 import 'package:wan_android/util/data_helper.dart';
 import 'package:wan_android/util/widget_util.dart';
 
+import '../util/toast_util.dart';
+
 class SearchResultPage extends StatefulWidget {
   String keywords;
 
@@ -132,7 +134,7 @@ class _ResultPageState extends State<SearchResultPage> {
         });
       } else {
         print('搜索失败！');
-        ToastUtil.showToast(context, '搜索失败');
+        ToastUtil.showToast( '搜索失败');
       }
     });
   }

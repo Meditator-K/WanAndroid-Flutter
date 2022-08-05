@@ -195,7 +195,6 @@ class _HomeWidgetState extends State<HomeWidget> {
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _scrollController.dispose();
   }

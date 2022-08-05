@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 ///通用的appbar
 PreferredSize commonAppbar(text,
     {double elevation: 1,
-    backgroundColor: Colors.white,
+    backgroundColor: Colors.green,
     Widget? actionWidget,
     PreferredSizeWidget? bottom,
     automaticallyImplyLeading: true}) {
@@ -13,13 +13,13 @@ PreferredSize commonAppbar(text,
       child: AppBar(
         title: Text(
           text,
-          style: TextStyle(fontSize: 18, color: Colors.black),
+          style: TextStyle(fontSize: 20, color: Colors.white),
         ),
         automaticallyImplyLeading: automaticallyImplyLeading,
         elevation: elevation,
         centerTitle: true,
         backgroundColor: backgroundColor,
-        iconTheme: IconThemeData(color: Colors.black),
+        iconTheme: IconThemeData(color: Colors.white),
         systemOverlayStyle: SystemUiOverlayStyle.dark,
         actions: [
           if (actionWidget != null)

@@ -7,6 +7,8 @@ import 'package:wan_android/http/http_manager.dart';
 import 'package:wan_android/page/search_result_page.dart';
 import 'package:wan_android/util/widget_util.dart';
 
+import '../util/toast_util.dart';
+
 class SearchPage extends StatefulWidget {
   @override
   SearchPageState createState() => SearchPageState();
@@ -142,7 +144,7 @@ class SearchPageState extends State<SearchPage> {
 
   void _doSearch(BuildContext context, String text) {
     if (text.isEmpty) {
-      ToastUtil.showToast(context, '请输入关键字后再搜索');
+      ToastUtil.showToast( '请输入关键字后再搜索');
       return;
     }
     Navigator.of(context)

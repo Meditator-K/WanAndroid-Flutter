@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:wan_android/constant/http_code.dart';
-import 'package:wan_android/constant/widget_style.dart';
 import 'package:wan_android/entity/base_entity.dart';
 import 'package:wan_android/http/api.dart';
 import 'package:wan_android/http/http_manager.dart';
-import 'package:wan_android/util/widget_util.dart';
+import 'package:wan_android/widget/common_widget.dart';
+
+import '../global/screen_info.dart';
+import '../util/toast_util.dart';
+import '../widget/button_widget.dart';
 
 class RegisterPage extends StatefulWidget {
   @override
@@ -15,16 +18,13 @@ class _RegisterPageState extends State<RegisterPage> {
   var _accountController = TextEditingController();
   var _pwdController = TextEditingController();
   var _rePwdController = TextEditingController();
-  bool _isHidePwd = true;
-  bool _isHideRePwd = true;
+  ValueNotifier<bool> _showPwd = ValueNotifier(false);
+  ValueNotifier<bool> _showRePwd = ValueNotifier(false);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('注册'),
-        centerTitle: true,
-      ),
+      appBar: commonAppbar('注册'),
       body: Padding(
           padding: EdgeInsets.all(20.0),
           child: SingleChildScrollView(
@@ -36,84 +36,55 @@ class _RegisterPageState extends State<RegisterPage> {
                     prefixIcon: Icon(Icons.account_box),
                     suffixIcon: IconButton(
                       icon: Icon(Icons.cancel),
-                      onPressed: _clearAccount,
+                      onPressed: () => _accountController.text = '',
                     ),
                     hintText: '请输入账号'),
               ),
-              TextField(
-                controller: _pwdController,
-                decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.lock),
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.remove_red_eye),
-                      onPressed: _showPwd,
-                    ),
-                    hintText: '请输入密码'),
-                obscureText: _isHidePwd,
-              ),
-              TextField(
-                controller: _rePwdController,
-                decoration: InputDecoration(
-                    prefixIcon: Icon(Icons.lock),
-                    suffixIcon: IconButton(
-                      icon: Icon(Icons.remove_red_eye),
-                      onPressed: _showRePwd,
-                    ),
-                    hintText: '请再次输入密码'),
-                obscureText: _isHideRePwd,
-              ),
-              Container(
-                height: 30,
-                color: Colors.transparent,
-              ),
-              Flex(
-                direction: Axis.horizontal,
-                children: <Widget>[
-                  Expanded(
-                    flex: 1,
-                    child: RaisedButton(
-                      child: Text('注册', style: WidgetStyle.BTN_STYLE),
-                      onPressed: () {
-                        _doRegister(context);
-                      },
-                      color: Colors.lightBlue,
-                    ),
-                  )
-                ],
-              ),
+              ValueListenableBuilder(
+                  valueListenable: _showPwd,
+                  builder: (context, bool value, child) {
+                    return TextField(
+                      controller: _pwdController,
+                      decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.lock),
+                          suffixIcon: IconButton(
+                            icon: Icon(value
+                                ? Icons.visibility
+                                : Icons.visibility_off),
+                            onPressed: () => _showPwd.value = !_showPwd.value,
+                          ),
+                          hintText: '请输入密码'),
+                      obscureText: !value,
+                    );
+                  }),
+              ValueListenableBuilder(
+                  valueListenable: _showRePwd,
+                  builder: (context, bool value, child) {
+                    return TextField(
+                      controller: _pwdController,
+                      decoration: InputDecoration(
+                          prefixIcon: Icon(Icons.lock),
+                          suffixIcon: IconButton(
+                            icon: Icon(value
+                                ? Icons.visibility
+                                : Icons.visibility_off),
+                            onPressed: () =>
+                                _showRePwd.value = !_showRePwd.value,
+                          ),
+                          hintText: '请再次输入密码'),
+                      obscureText: !value,
+                    );
+                  }),
+              const SizedBox(height: 30),
+              SizedBox(
+                  width: ScreenInfo().screenWidth - 80,
+                  height: 40,
+                  child: elevatedBtn('注册',
+                      padding: EdgeInsets.only(left: 50, right: 50),
+                      onPress: () => _doRegister(context))),
             ],
           ))),
     );
-  }
-
-  _clearAccount() {
-    _accountController.text = '';
-  }
-
-  _showPwd() {
-    if (_pwdController.text.isEmpty) {
-      return;
-    }
-    setState(() {
-      if (_isHidePwd) {
-        _isHidePwd = false;
-      } else {
-        _isHidePwd = true;
-      }
-    });
-  }
-
-  _showRePwd() {
-    if (_rePwdController.text.isEmpty) {
-      return;
-    }
-    setState(() {
-      if (_isHideRePwd) {
-        _isHideRePwd = false;
-      } else {
-        _isHideRePwd = true;
-      }
-    });
   }
 
   void _doRegister(BuildContext context) {
@@ -121,11 +92,11 @@ class _RegisterPageState extends State<RegisterPage> {
     String pwd = _pwdController.text;
     String rePwd = _rePwdController.text;
     if (account.isEmpty || pwd.isEmpty || rePwd.isEmpty) {
-      ToastUtil.showToast(context, '请输入账号和密码');
+      ToastUtil.showToast('请输入账号和密码');
       return;
     }
     if (pwd != rePwd) {
-      ToastUtil.showToast(context, '请确保两次输入的密码一致');
+      ToastUtil.showToast('请确保两次输入的密码一致');
       return;
     }
     var params = {'username': account, 'password': pwd, 'repassword': rePwd};
@@ -134,18 +105,22 @@ class _RegisterPageState extends State<RegisterPage> {
         BaseData? baseData = baseEntity.data;
         int? errorCode = baseData?.errorCode;
         if (errorCode == HttpCode.ERROR_CODE_SUC) {
-          print('注册成功');
-          ToastUtil.showToast(context, '注册成功');
+          ToastUtil.showToast('注册成功');
           //返回登录界面
           Navigator.pop(context);
         } else {
-          print('注册失败');
-          ToastUtil.showToast(context, '注册失败:$errorCode');
+          ToastUtil.showToast('注册失败:$errorCode');
         }
       } else {
-        print('注册失败');
-        ToastUtil.showToast(context, '注册失败:${baseEntity.msg}');
+        ToastUtil.showToast('注册失败:${baseEntity.msg}');
       }
     });
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    _showPwd.dispose();
+    _showRePwd.dispose();
   }
 }

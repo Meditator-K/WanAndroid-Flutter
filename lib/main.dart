@@ -1,19 +1,27 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_smart_dialog/flutter_smart_dialog.dart';
 import 'package:wan_android/page/collect_list_page.dart';
-import 'package:wan_android/page/fingerprint_login_page.dart';
 import 'package:wan_android/page/gesture_unlock_page.dart';
 import 'package:wan_android/page/home_page.dart';
 import 'package:wan_android/page/login_page.dart';
 import 'package:wan_android/page/register_page.dart';
 import 'package:wan_android/page/search_page2.dart';
 import 'package:wan_android/page/todo_page.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:wan_android/util/sp_util.dart';
 
 import 'constant/data_keys.dart';
 import 'global/user.dart';
 
 void main() {
+  final SystemUiOverlayStyle _style = SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarBrightness: Brightness.dark,
+      statusBarIconBrightness: Brightness.dark);
+  SystemChrome.setSystemUIOverlayStyle(_style);
+  WidgetsFlutterBinding.ensureInitialized();
   WidgetsFlutterBinding.ensureInitialized();
   SpUtil.getStrList(DataKeys.COOKIE).then((cookie) {
     if (cookie != null) {
@@ -33,18 +41,17 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       localizationsDelegates: [
-        //日历控件设置中文需要
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+        DefaultCupertinoLocalizations.delegate
       ],
       supportedLocales: [
         const Locale('zh', 'CH'),
         const Locale('en', 'US'),
       ],
-      locale: const Locale('zh'),
-      title: 'Wan Android',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.green,
       ),
       home: HomePage(),
       routes: <String, WidgetBuilder>{
@@ -57,6 +64,7 @@ class MyApp extends StatelessWidget {
         // '/FingerprintLoginPage': (context) => FingerprintLoginPage(),
         '/GestureUnlockPage': (context) => GestureUnlockPage(),
       },
+      builder: FlutterSmartDialog.init(),
     );
   }
 }

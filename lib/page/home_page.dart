@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:toast/toast.dart';
 import 'package:wan_android/constant/data_keys.dart';
 import 'package:wan_android/constant/widget_style.dart';
 import 'package:wan_android/global/user.dart';
+import 'package:wan_android/page/login_page.dart';
+import 'package:wan_android/util/navigator_util.dart';
 import 'package:wan_android/util/sp_util.dart';
-import 'package:wan_android/util/widget_util.dart';
 import 'package:wan_android/widget/home_widget.dart';
 import 'package:wan_android/widget/navi_widget2.dart';
 import 'package:wan_android/widget/project_widget.dart';
 import 'package:wan_android/widget/tree_widget.dart';
+
+import '../global/screen_info.dart';
+import '../util/toast_util.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -32,7 +37,9 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     _context = context;
-    // TODO: implement build
+    ToastContext().init(context);
+    ScreenInfo().setScreenData(context);
+
     loadUsername();
     return WillPopScope(
       child: Scaffold(
@@ -64,20 +71,13 @@ class _HomePageState extends State<HomePage> {
             BottomNavigationBarItem(icon: Icon(Icons.list), label: '项目'),
           ],
           currentIndex: _selectIndex,
-          selectedItemColor: Colors.blue,
+          selectedItemColor: Colors.green,
           onTap: _onItemSelected,
           showUnselectedLabels: true,
           type: BottomNavigationBarType.fixed,
           unselectedItemColor: Colors.black45,
         ),
         drawer: _drawer,
-//        DrawerController(///有bug
-//          child: _drawer,
-//          alignment: DrawerAlignment.start,
-//          drawerCallback: (isOpen) {
-//            print('是否打开抽屉：$isOpen');
-//          },
-//        ),
       ),
       onWillPop: _onBack,
     );
@@ -96,10 +96,13 @@ class _HomePageState extends State<HomePage> {
                   ),
                   backgroundColor: Colors.white,
                 ),
-                accountEmail: Container(),
+                accountEmail: null,
                 accountName: GestureDetector(
+                    behavior: HitTestBehavior.opaque,
                     onTap: _toLogin,
-                    child: Text(_username, style: WidgetStyle.BTN_STYLE))),
+                    child: Container(
+                        padding: EdgeInsets.fromLTRB(5, 5, 5, 20),
+                        child: Text(_username, style: WidgetStyle.BTN_STYLE)))),
             ListTile(
               leading: Icon(Icons.collections_bookmark),
               title: Text(
@@ -168,10 +171,9 @@ class _HomePageState extends State<HomePage> {
 
   //监听返回键，按两次退出程序
   Future<bool> _onBack() {
-    print('点击了返回键');
     if (!isBack) {
       isBack = true;
-      ToastUtil.showToast(context, '再按一次退出程序');
+      ToastUtil.showToast('再按一次退出程序');
       Future.delayed(Duration(seconds: 2), () {
         isBack = false;
       });
@@ -213,8 +215,8 @@ class _HomePageState extends State<HomePage> {
 
   //如果没登录，跳转到登录页面
   void _toLogin() {
-    if (User().cookies == null) {
-      Navigator.pushNamed(context, '/LoginPage');
+    if ((User().cookies ?? []).isEmpty) {
+      NavigatorUtil.push(context, LoginPage());
     }
   }
 

@@ -2,11 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:toast/toast.dart';
 import 'package:wan_android/entity/article_entity.dart';
 
-class ToastUtil {
-  static showToast(BuildContext context, String msg) {
-    Toast.show(msg, duration: Toast.lengthLong, gravity: Toast.center);
-  }
-}
 
 Widget loadMoreWidget(bool isLoading) {
   return Center(

@@ -116,6 +116,13 @@ packages:
       url: "https://pub.flutter-io.cn"
     source: hosted
     version: "2.0.7"
+  flutter_smart_dialog:
+    dependency: "direct main"
+    description:
+      name: flutter_smart_dialog
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "4.5.3+8"
   flutter_swiper_null_safety_flutter3:
     dependency: "direct main"
     description:
