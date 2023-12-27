@@ -66,6 +66,7 @@ class _ProjectWidgetState extends State<ProjectWidget>
     // TODO: implement build
     return Scaffold(
       appBar: AppBar(
+          elevation: 0,
           title: isInitComplete
               ? TabBar(
                   isScrollable: true,

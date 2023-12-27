@@ -115,13 +115,13 @@ class _CollectListPageState extends State<CollectListPage> {
               title: Text('提示！'),
               content: Text('是否取消该条收藏？'),
               actions: <Widget>[
-                FlatButton(
+                TextButton(
                   child: Text('取消'),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
                 ),
-                FlatButton(
+                TextButton(
                   child: Text('确定'),
                   onPressed: () {
                     Navigator.of(context).pop();

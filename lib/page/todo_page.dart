@@ -254,13 +254,13 @@ class ToDoPageState extends State<ToDoPage> with TickerProviderStateMixin {
                 ],
               )),
               actions: <Widget>[
-                FlatButton(
+                TextButton(
                   child: Text('取消'),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
                 ),
-                FlatButton(
+                TextButton(
                   child: Text('确定'),
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -336,13 +336,13 @@ class ToDoPageState extends State<ToDoPage> with TickerProviderStateMixin {
               title: Text('提示'),
               content: Text('确定删除该条便签？'),
               actions: <Widget>[
-                FlatButton(
+                TextButton(
                   child: Text('取消'),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
                 ),
-                FlatButton(
+                TextButton(
                   child: Text('确定'),
                   onPressed: () {
                     Navigator.of(context).pop();
@@ -362,13 +362,13 @@ class ToDoPageState extends State<ToDoPage> with TickerProviderStateMixin {
                   ? '是否将该条标记为已完成？'
                   : '是否将该条标记为未完成？'),
               actions: <Widget>[
-                FlatButton(
+                TextButton(
                   child: Text('取消'),
                   onPressed: () {
                     Navigator.of(context).pop();
                   },
                 ),
-                FlatButton(
+                TextButton(
                   child: Text('确定'),
                   onPressed: () {
                     Navigator.of(context).pop();

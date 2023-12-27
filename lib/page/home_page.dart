@@ -46,6 +46,7 @@ class _HomePageState extends State<HomePage> {
         appBar: AppBar(
           title: Text(titles[_selectIndex]),
           centerTitle: true,
+          elevation: 0,
           actions: <Widget>[
             IconButton(
               icon: Icon(
@@ -135,13 +136,13 @@ class _HomePageState extends State<HomePage> {
               title: Text('提示！'),
               content: Text('确认退出吗？'),
               actions: <Widget>[
-                FlatButton(
+                TextButton(
                   child: Text('取消'),
                   onPressed: () {
                     Navigator.of(_context!).pop();
                   },
                 ),
-                FlatButton(
+                TextButton(
                   child: Text('确定'),
                   onPressed: () {
                     _logout();

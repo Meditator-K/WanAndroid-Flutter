@@ -27,7 +27,7 @@ apply from: "$flutterRoot/packages/flutter_tools/gradle/flutter.gradle"
 apply plugin: 'kotlin-android'
 
 android {
-    compileSdkVersion 31
+    compileSdkVersion 33
 
     lintOptions {
         disable 'InvalidPackage'
@@ -51,13 +51,13 @@ android {
             keyPassword "229720"
 
         }
-        debug {
-            storeFile file('/Users/kongyf/project/kyf.keystore')
-            storePassword "229720"
-            keyAlias "kong"
-            keyPassword "229720"
-
-        }
+//        debug {
+//            storeFile file('/Users/kongyf/project/kyf.keystore')
+//            storePassword "229720"
+//            keyAlias "kong"
+//            keyPassword "229720"
+//
+//        }
     }
 
     buildTypes {
